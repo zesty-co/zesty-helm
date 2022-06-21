@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ .Release.Name }}-collector
+  labels:
+    app: {{ .Values.collector.appName }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.collector.appName }}
+  template:
+    metadata:
+      name: {{ .Release.Name }}-daemon
+      labels:
+        app: {{ .Values.collector.appName }}
+    spec:
+      volumes:
+        - name: dev
+          hostPath:
+            path: "/dev"
+        - name: host
+          hostPath:
+            path: "/"
+        - name: apikeyfile
+          configMap:
+            name: {{ .Values.collector.appName }}-apikey
+      containers:
+      - name: {{ .Values.collector.appName }}
+        {{- with .Values.collector.image }}
+        image: {{ $.Values.registry }}/{{ .name }}:{{ .tag }}
+        securityContext:
+          privileged: true
+        imagePullPolicy: {{ .pullPolicy }}
+        {{- end }}
+        volumeMounts:
+          - name: dev
+            mountPath: "/dev"
+          - name: host
+            mountPath: "/host"
+          - name: apikeyfile
+            mountPath: {{ .Values.collector.apikeyPath }}
+            subPath: "apikey"
+        securityContext:
+            privileged: true
+              {{- /*
+        # livenessProbe:
+# {{ toYaml .Values.collector.livenessProbe | indent 10 }}
+        # readinessProbe:
+# {{ toYaml .Values.collector.readinessProbe | indent 10 }}
+              */}}
+        resources:
+{{ toYaml .Values.collector.resources | indent 10 }}
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: API_KEY
+          value: {{ .Values.apikey }}
+        securityContext:
+            privileged: true

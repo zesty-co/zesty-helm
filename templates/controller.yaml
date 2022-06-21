@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-controller
+  labels:
+    app: {{ .Values.controller.appName }}
+spec:
+  replicas: {{ .Values.controller.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.controller.appName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.controller.appName }}
+    spec:
+      serviceAccountName: {{ .Values.controller.appName }}-serviceaccount
+      containers:
+      - name: {{ .Values.controller.appName }}
+        envFrom:
+        - configMapRef:
+            name: {{ .Values.controller.appName }}-configmap
+        {{- with .Values.controller.image }}
+        image: {{ $.Values.registry }}/{{ .name }}:{{ .tag }}
+        imagePullPolicy: {{ .pullPolicy }}
+        {{- end }}
+        {{- /*
+        # livenessProbe:
+# {{ toYaml .Values.controller.livenessProbe | indent 10 }}
+        # readinessProbe:
+# {{ toYaml .Values.controller.readinessProbe | indent 10 }}
+        */}}
+

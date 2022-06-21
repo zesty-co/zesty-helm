@@ -1,0 +1,66 @@
+namespace: "default"
+apikey: ""
+registry: zestyco
+
+cloud:
+  name: "Amazon"
+  dynamicdataEndpoint:
+    ipv4: "http://169.254.169.254/latest/dynamic"
+  metadataEndpoint:
+    ipv4: "http://169.254.169.254/latest/meta-data"
+    ivp6: "http://[fd00:ec2::254]/latest/meta-data"
+
+storageClass:
+  create: true
+  type: "gp2"
+  csi.storage.k8s.io/fstype: "btrfs"
+  # Availability zone is an optional setting: can be locked by the storageClass
+  # availabilityZone: "us-west-2c"
+
+controller:
+  appName: zesty-controller
+  appConfig:
+    tagVolumeEndpointURL: "https://api-staging.cloudvisor.io/zesty-disk-v4/tag-volume"
+  replicas: 1
+  livenessProbe:
+    tcpSocket:
+      port: 8080
+    initialDelaySeconds: 15
+    periodSeconds: 20
+  readinessProbe:
+    tcpSocket:
+      port: 8080
+    initialDelaySeconds: 5
+    periodSeconds: 10
+  image:
+    name: controller
+    tag: latest
+    pullPolicy: Always
+  resources:
+    limits:
+      cpu: "1"
+    requests:
+      cpu: "0.5"
+
+collector:
+  appName: zesty-collector
+  image:
+    name: collector
+    tag: latest
+    pullPolicy: Always
+  livenessProbe:
+    tcpSocket:
+      port: 8080
+    initialDelaySeconds: 15
+    periodSeconds: 20
+  readinessProbe:
+    tcpSocket:
+      port: 8080
+    initialDelaySeconds: 5
+    periodSeconds: 10
+  resources:
+    limits:
+      cpu: "1"
+    requests:
+      cpu: "0.5"
+  apikeyPath: "/zesty/collector/.apikey"
