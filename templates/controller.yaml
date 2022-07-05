@@ -16,18 +16,19 @@ spec:
     spec:
       serviceAccountName: {{ .Values.controller.appName }}-serviceaccount
       containers:
-      - name: {{ .Values.controller.appName }}
+      - name: {{ .Values.controller.appName }}-{{ .Values.controller.informer.appName }}
         envFrom:
         - configMapRef:
             name: {{ .Values.controller.appName }}-configmap
-        {{- with .Values.controller.image }}
+        {{- with .Values.controller.informer.image }}
         image: {{ $.Values.registry }}/{{ .name }}:{{ .tag }}
         imagePullPolicy: {{ .pullPolicy }}
         {{- end }}
-        {{- /*
-        # livenessProbe:
-# {{ toYaml .Values.controller.livenessProbe | indent 10 }}
-        # readinessProbe:
-# {{ toYaml .Values.controller.readinessProbe | indent 10 }}
-        */}}
-
+      - name: {{ .Values.controller.appName }}-{{ .Values.controller.manager.appName }}
+        envFrom:
+        - configMapRef:
+            name: {{ .Values.controller.appName }}-configmap
+        {{- with .Values.controller.manager.image }}
+        image: {{ $.Values.registry }}/{{ .name }}:{{ .tag }}
+        imagePullPolicy: {{ .pullPolicy }}
+        {{- end }}
