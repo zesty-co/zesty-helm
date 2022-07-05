@@ -89,7 +89,9 @@ spec:
 {{ toYaml .Values.collector.resources | indent 10 }}
         env:
         - name: MANAGER_URL
-          value: {{ .Values.controller.manager.svc.path }}
+          value: {{ .Values.controller.manager.appName }}-service
+        - name: MANAGER_PORT
+          value: {{ .Values.controller.manager.port }}
         - name: POD_NAMESPACE
           valueFrom:
             fieldRef:
