@@ -10,5 +10,5 @@ entries:
     type: application
     urls:
     - https://zesty-co.github.io/zesty-helm/zesty-0.1.0.tgz
-    version: 0.1.0
+    version: 0.1.1
 generated: "2022-06-21T17:04:08.967324+01:00"
