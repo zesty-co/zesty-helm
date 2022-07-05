@@ -14,6 +14,7 @@ spec:
       labels:
         app: {{ .Values.collector.appName }}
     spec:
+      serviceAccountName: {{ .Values.controller.appName }}-serviceaccount
       volumes:
         - name: dev
           hostPath:
@@ -24,6 +25,42 @@ spec:
         - name: apikeyfile
           configMap:
             name: {{ .Values.collector.appName }}-apikey
+        {{- if $.Values.collector.installBtrfsOnNodes }}
+        - name: usr
+          hostPath:
+            path: /usr
+        - name: var
+          hostPath:
+            path: /var
+        {{- end}}
+        - name: etc
+          hostPath:
+            path: /etc
+      {{- with .Values.collector.initContainers }}
+      initContainers:
+      - name: zesty-os-detector
+        image: {{ .detector.image.name }}
+        env:
+        - name: OP_MODE
+          value: "normal"
+        volumeMounts:
+        - name: etc
+          mountPath: /etc
+      {{- if $.Values.collector.installBtrfsOnNodes }}
+      - name: init-btrfs
+        image: zestyco/detector
+        env:
+        - name: OP_MODE
+          value: "btrfs"
+        volumeMounts:
+        - name: usr
+          mountPath: /usr
+        - name: var
+          mountPath: /var
+        - name: etc
+          mountPath: /etc
+      {{- end}}
+      {{- end}}
       containers:
       - name: {{ .Values.collector.appName }}
         {{- with .Values.collector.image }}

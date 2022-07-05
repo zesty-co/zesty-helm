@@ -64,3 +64,8 @@ collector:
     requests:
       cpu: "0.5"
   apikeyPath: "/zesty/collector/.apikey"
+  installBtrfsOnNodes: true
+  initContainers:
+    detector:
+      image:
+        name: zestyco/detector
