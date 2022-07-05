@@ -17,6 +17,9 @@ rules:
     - "persistentvolumeclaims"
     - "events"
     - "nodes"
+  verbs: ["get", "watch", "list", "create", "update", "patch", "delete"]
+- apiGroups: ["apps"]
+  resources:
     - "statefulsets"
   verbs: ["get", "watch", "list", "create", "update", "patch", "delete"]
 
