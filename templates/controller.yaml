@@ -25,9 +25,6 @@ spec:
         imagePullPolicy: {{ .pullPolicy }}
         {{- end }}
       - name: {{ .Values.controller.appName }}-manager
-        envFrom:
-        - configMapRef:
-            name: {{ .Values.controller.appName }}-manager-configmap
         {{- with .Values.controller.manager.image }}
         image: {{ $.Values.registry }}/{{ .name }}:{{ .tag }}
         imagePullPolicy: {{ .pullPolicy }}
