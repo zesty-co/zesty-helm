@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Values.controller.appName }}-configmap
+  name: {{ .Values.controller.appName }}-informer-configmap
 data:
   CLOUD_PROVIDER: {{ .Values.cloud.name }}
   AWS_METADATA_VERSION: "2020-10-27"
