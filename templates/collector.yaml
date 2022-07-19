@@ -90,11 +90,11 @@ spec:
         env:
         {{- with .Values.controller.manager }}
         - name: CREATE_ZPV_ENDPOINT
-          value: {{ .appName }}-service:8080/create
+          value: http://{{ .appName }}-service:8080/create
         - name: DELETE_ZPV_ENDPOINT
-          value: {{ .appName }}-service:8080/delete
+          value: http://{{ .appName }}-service:8080/delete
         - name: UPDATE_ZPV_ENDPOINT
-          value: {{ .appName }}-service:8080/update
+          value: http://{{ .appName }}-service:8080/update
         {{- end}}
         - name: POD_NAMESPACE
           valueFrom:
