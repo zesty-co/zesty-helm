@@ -25,7 +25,7 @@ spec:
         - name: apikeyfile
           configMap:
             name: {{ .Values.collector.appName }}-apikey
-        {{- if $.Values.collector.installBtrfsOnNodes }}
+        {{- if .Values.collector.installBtrfsOnNodes }}
         - name: usr
           hostPath:
             path: /usr
