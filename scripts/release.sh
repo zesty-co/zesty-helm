@@ -12,7 +12,13 @@ pack() {
 }
 
 index() {
-  helm repo index "https://github.com/zesty-co/zesty-helm/releases/download/${bumped_version}/${RELEASE_FILE}" .
+  helm repo index --url "https://github.com/zesty-co/zesty-helm/releases/download/${bumped_version}/${RELEASE_FILE}" .
+}
+
+git_actions() {
+  git add "*"
+  git commit "auto-release"
+  git push origin upstream
 }
 
 release() {
@@ -22,4 +28,5 @@ release() {
 bump_version
 pack
 index
+git_actions
 release
