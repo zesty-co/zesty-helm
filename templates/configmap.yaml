@@ -10,7 +10,11 @@ data:
   CLOUD_NAME: {{ .Values.cloud.name }}
   METADATA_URL: {{ .Values.cloud.metadataEndpoint.ipv4 }}
   DYNAMIC_DATA_URL: {{ .Values.cloud.dynamicdataEndpoint.ipv4 }}
-  TAG_VOLUME_ENDPOINT: {{ .Values.controller.informer.appConfig.tagVolumeEndpointURL }}
+  {{- if eq .Values.environment "staging" }}
+  TAG_VOLUME_ENDPOINT: {{ .Values.controller.informer.appConfig.staging.tagVolumeEndpointURL }}
+  {{- else if eq .Values.environment "prod" }}
+  TAG_VOLUME_ENDPOINT: {{ .Values.controller.informer.appConfig.prod.tagVolumeEndpointURL }}
+  {{- end }}
 
 ---
 
