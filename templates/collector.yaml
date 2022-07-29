@@ -70,6 +70,8 @@ spec:
         imagePullPolicy: {{ .pullPolicy }}
         {{- end }}
         volumeMounts:
+          - name: usr
+            mountPath: "/usr"
           - name: dev
             mountPath: "/dev"
           - name: host
@@ -79,12 +81,6 @@ spec:
             subPath: "apikey"
         securityContext:
             privileged: true
-              {{- /*
-        # livenessProbe:
-# {{ toYaml .Values.collector.livenessProbe | indent 10 }}
-        # readinessProbe:
-# {{ toYaml .Values.collector.readinessProbe | indent 10 }}
-              */}}
         resources:
 {{ toYaml .Values.collector.resources | indent 10 }}
         env:
