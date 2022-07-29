@@ -3,7 +3,6 @@ A Helm package to install [Zesty Disk's](https://zesty.co/products/zesty-disk/) 
 
 ## Prerequisites
 * Kubernetes 1.7+
-* `btrfs-progs` on cluster nodes
 
 ## Installation
 ```
@@ -11,6 +10,9 @@ A Helm package to install [Zesty Disk's](https://zesty.co/products/zesty-disk/) 
 
 # Add the Zesty repo to your helm client
 $ helm repo add zestyrepo https://zesty-co.github.io/zesty-helm
+
+# Update the repo if it's already configured
+$ helm repo update
 
 # Install the chart
 $ helm install zesty --set apikey="" zestyrepo/zesty-helm
