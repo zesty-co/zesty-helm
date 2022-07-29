@@ -21,7 +21,7 @@ $ helm install zesty --set apikey="" zestyrepo/zesty-helm
 ## Uninstalling the Chart
 To uninstall/delete:
 ```bash
-$ helm delete my-release
+$ helm delete zesty
 ```
 
 ## Configuration
