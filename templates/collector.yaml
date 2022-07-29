@@ -88,6 +88,10 @@ spec:
         resources:
 {{ toYaml .Values.collector.resources | indent 10 }}
         env:
+        - name: ZESTY_KUBERNETES
+          value: "true"
+        - name: ZX_LOGLEVEL
+          value: "INFO"
         {{- with .Values.controller.manager }}
         - name: CREATE_ZPV_ENDPOINT
           value: http://{{ .appName }}-service:8080/create
