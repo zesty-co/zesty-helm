@@ -1,6 +1,7 @@
 namespace: "default"
 apikey: ""
 registry: zestyco
+environment: "prod"
 
 cloud:
   name: "Amazon"
@@ -30,7 +31,10 @@ controller:
   informer:
     appName: informer
     appConfig:
-      tagVolumeEndpointURL: "https://api-staging.cloudvisor.io/zesty-disk-v4/tag-volume"
+      staging:
+        tagVolumeEndpointURL: "https://api-staging.cloudvisor.io/zesty-disk-v4/tag-volume"
+      prod:
+        tagVolumeEndpointURL: "https://api.cloudvisor.io/zesty-disk-v4/tag-volume"
     livenessProbe:
       tcpSocket:
         port: 8080
