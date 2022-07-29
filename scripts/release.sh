@@ -27,3 +27,4 @@ bump_version
 pack
 index
 release
+clean_workspace
