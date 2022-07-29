@@ -16,6 +16,20 @@ $ helm repo add zestyrepo https://zesty-co.github.io/zesty-helm
 $ helm install zesty --set apikey="" zestyrepo/zesty-helm
 ```
 
+## Uninstalling the Chart
+To uninstall/delete:
+```bash
+$ helm delete my-release
+```
+
+## Configuration
+The following table lists the configurable parameters of the zesty-disk chart and their default values.
+| Parameter | Description | Default |
+| --------- | ----------- | ------- |
+| namespace | The K8s target namespace | "default" |
+| apikey  | Zesty API key | "" |
+| registry  | The Docker registry used to pull images | "zestyco" |
+
 ## Usage
 In order to start utilising Zesty Disk in your cluster, after installing the chart, go ahead and create a `StatefulSet` (or add to an existing one) the label `ZestyDisk: true` **to its pods** (under `statefulset.spec.template.metadata.labels`).
 Once the pods are labeled, every new PV created (whether through the `volumeClaimTemplates` of the StatefulSet or another way) will start being tracked by the system.
