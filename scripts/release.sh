@@ -19,6 +19,10 @@ release() {
   gh release create "${bumped_version}" "${RELEASE_FILE}" --generate-notes --prerelease --title "New ZD release"
 }
 
+clean_workspace() {
+  rm "*.tar.gz"
+}
+
 bump_version
 pack
 index
