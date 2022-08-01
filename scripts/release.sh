@@ -20,7 +20,7 @@ release() {
 }
 
 clean_workspace() {
-  rm "*.tar.gz"
+  rm "*.tgz"
 }
 
 bump_version

@@ -57,6 +57,7 @@ controller:
 
 collector:
   appName: zesty-collector
+  logLevel: "INFO"
   image:
     name: collector
     tag: latest

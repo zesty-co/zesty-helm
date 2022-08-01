@@ -87,7 +87,7 @@ spec:
         - name: ZESTY_KUBERNETES
           value: "true"
         - name: ZX_LOGLEVEL
-          value: "INFO"
+          value: {{ .Values.collector.logLevel }}
         {{- with .Values.controller.manager }}
         - name: CREATE_ZPV_ENDPOINT
           value: http://{{ .appName }}-service:8080/create
