@@ -33,7 +33,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: {{ .Values.controller.appName }}-serviceaccount
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Release.Namespace }}
 roleRef:
   kind: ClusterRole
   name: {{ .Values.controller.appName }}-role
