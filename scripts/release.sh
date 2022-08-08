@@ -20,7 +20,7 @@ release() {
 }
 
 clean_workspace() {
-  rm "*.tgz"
+  rm "${RELEASE_FILE}"
 }
 
 commit() {
