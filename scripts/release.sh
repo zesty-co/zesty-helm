@@ -23,6 +23,11 @@ clean_workspace() {
   rm "*.tgz"
 }
 
+commit() {
+  git add Chart.yaml index.yatml
+  git commit -m "bump ${bumped_version}"
+}
+
 bump_version
 pack
 index
