@@ -24,7 +24,7 @@ clean_workspace() {
 }
 
 commit() {
-  git add Chart.yaml index.yatml
+  git add Chart.yaml index.yaml
   git commit -m "bump ${bumped_version}"
 }
 
@@ -32,4 +32,5 @@ bump_version
 pack
 index
 release
+commit
 clean_workspace
