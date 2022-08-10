@@ -31,9 +31,11 @@ controller:
     appName: informer
     appConfig:
       staging:
-        tagVolumeEndpointURL: "https://api-staging.cloudvisor.io/zesty-disk-v4/tag-volume"
+        tagVolumeEndpointURL: "https://api-staging.cloudvisor.io/zesty-disk-v5/tag-volume"
+        deleteVolumesEndpointURL: "https://api-staging.cloudvisor.io/zesty-disk-v5/detach-and-delete-volumes"
       prod:
         tagVolumeEndpointURL: "https://api.cloudvisor.io/zesty-disk-v4/tag-volume"
+        deleteVolumesEndpointURL: "https://api.cloudvisor.io/zesty-disk-v4/detach-and-delete-volumes"
     livenessProbe:
       tcpSocket:
         port: 8080
