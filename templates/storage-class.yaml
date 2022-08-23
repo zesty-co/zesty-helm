@@ -2,11 +2,10 @@
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: {{ .Release.Name }}-storageclass
+  name: zesty-storageclass
   labels:
     app: zesty-disk
 provisioner: kubernetes.io/aws-ebs
-# provisioner: ebs.csi.aws.com
 parameters:
   type: {{ default "gp2" .Values.storageClass.type }}
   fsType: {{ default "btrfs" .Values.storageClass.fsType }}
