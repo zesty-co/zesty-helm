@@ -1,0 +1,82 @@
+apikey: ""
+registry: 577926974532.dkr.ecr.us-east-1.amazonaws.com
+debug: true
+
+cloud:
+  name: "Amazon"
+  dynamicdataEndpoint:
+    ipv4: "http://169.254.169.254/latest/dynamic"
+  metadataEndpoint:
+    ipv4: "http://169.254.169.254/latest/meta-data"
+    ivp6: "http://[fd00:ec2::254]/latest/meta-data"
+
+storageClass:
+  create: true
+  type: "gp2"
+  csi.storage.k8s.io/fstype: "btrfs"
+  # Availability zone is an optional setting: can be locked by the storageClass
+  # availabilityZone: "us-west-2c"
+
+controller:
+  appName: zesty-controller
+  replicas: 1
+  manager:
+    appName: manager
+    image:
+      name: manager
+      tag: latest
+      pullPolicy: Always
+    port: 8080
+  informer:
+    appName: informer
+    appConfig:
+      tagVolumeEndpointURL: "https://api-staging.cloudvisor.io/zesty-disk-v5/tag-volume"
+      deleteVolumesEndpointURL: "https://api-staging.cloudvisor.io/zesty-disk-v5/detach-and-delete-volumes"
+    livenessProbe:
+      tcpSocket:
+        port: 8080
+      initialDelaySeconds: 15
+      periodSeconds: 20
+    readinessProbe:
+      tcpSocket:
+        port: 8080
+      initialDelaySeconds: 5
+      periodSeconds: 10
+    image:
+      name: informer
+      tag: latest
+      pullPolicy: Always
+    resources:
+      limits:
+        cpu: "1"
+      requests:
+        cpu: "0.5"
+
+collector:
+  appName: zesty-collector
+  logLevel: "INFO"
+  image:
+    name: collector
+    tag: latest
+    pullPolicy: Always
+  livenessProbe:
+    tcpSocket:
+      port: 8080
+    initialDelaySeconds: 15
+    periodSeconds: 20
+  readinessProbe:
+    tcpSocket:
+      port: 8080
+    initialDelaySeconds: 5
+    periodSeconds: 10
+  resources:
+    limits:
+      cpu: "1"
+    requests:
+      cpu: "0.5"
+  apikeyPath: "/zesty/collector/.apikey"
+  installBtrfsOnNodes: true
+  initContainers:
+    detector:
+      image:
+        name: zestyco/detector
