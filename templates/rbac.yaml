@@ -24,6 +24,10 @@ rules:
     - "statefulsets"
   verbs: ["get", "watch", "list", "create", "update", "patch", "delete"]
 
+- apiGroups: ["apps.zesty.co"]
+  resources:
+    - "zestfulsets"
+  verbs: ["get", "watch", "list", "create", "update", "patch", "delete"]
 ---
 
 kind: ClusterRoleBinding
