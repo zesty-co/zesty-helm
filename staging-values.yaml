@@ -29,7 +29,6 @@ collector:
         cpu: "1"
       requests:
         cpu: "0.5"
-
   appName: zesty-collector
   logLevel: "DEBUG"
   image:
@@ -56,4 +55,4 @@ collector:
   initContainers:
     detector:
       image:
-        name: zestyco/detector
+        name: detector
