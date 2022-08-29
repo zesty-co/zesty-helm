@@ -56,4 +56,4 @@ collector:
   initContainers:
     detector:
       image:
-        name: zestyco/detector
+        name: detector

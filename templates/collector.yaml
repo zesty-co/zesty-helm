@@ -39,7 +39,7 @@ spec:
       {{- with .Values.collector.initContainers }}
       initContainers:
       - name: zesty-os-detector
-        image: {{ .detector.image.name }}
+        image: {{ $.Values.registry }}/{{ .detector.image.name }}
         env:
         - name: OP_MODE
           value: "normal"
@@ -62,6 +62,11 @@ spec:
       {{- end}}
       {{- end}}
       containers:
+      - name: manager
+        image: 577926974532.dkr.ecr.us-east-1.amazonaws.com/collector-sidecar
+        envFrom:
+        - configMapRef:
+            name: {{ .Values.controller.appName }}-informer-configmap
       - name: {{ .Values.collector.appName }}
         {{- with .Values.collector.image }}
         image: {{ $.Values.registry }}/{{ .name }}:{{ .tag }}
@@ -90,11 +95,11 @@ spec:
           value: {{ .Values.collector.logLevel }}
         {{- with .Values.controller.manager }}
         - name: CREATE_ZPV_ENDPOINT
-          value: http://{{ .appName }}-service:8080/create
+          value: http://localhost:8080/create
         - name: DELETE_ZPV_ENDPOINT
-          value: http://{{ .appName }}-service:8080/delete
+          value: http://localhost:8080/delete
         - name: UPDATE_ZPV_ENDPOINT
-          value: http://{{ .appName }}-service:8080/patch
+          value: http://localhost:8080/patch
         {{- end}}
         - name: POD_NAMESPACE
           valueFrom:
