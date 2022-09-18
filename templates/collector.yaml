@@ -14,7 +14,7 @@ spec:
       labels:
         app: {{ .Values.collector.appName }}
     spec:
-      serviceAccountName: {{ .Values.controller.appName }}-serviceaccount
+      serviceAccountName: {{ .Values.collector.appName }}-serviceaccount
       volumes:
         - name: dev
           hostPath:
@@ -108,3 +108,13 @@ spec:
           value: {{ .Values.apikey }}
         securityContext:
             privileged: true
+      - name: {{ .Values.collector.prometheusSideCar.appName }}
+        {{- with .Values.collector.prometheusSideCar.image }}
+        image: {{ $.Values.registry }}/{{ .name }}:{{ .tag }}
+        imagePullPolicy: {{ .pullPolicy }}
+        volumeMounts:
+          - name: host
+            mountPath: "/host"
+        {{- end }}
+        resources:
+{{ toYaml .Values.collector.prometheusSideCar.resources | indent 10 }}
