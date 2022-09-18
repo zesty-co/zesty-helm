@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: {{ .Values.controller.appName }}-serviceaccount
+  name: {{ .Values.collector.appName }}-serviceaccount
 
 ---
 
@@ -9,7 +9,7 @@ metadata:
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: {{ .Values.controller.appName }}-role
+  name: {{ .Values.collector.appName }}-role
 rules:
 - apiGroups: [""]
   resources:
@@ -29,13 +29,13 @@ rules:
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: {{ .Values.controller.appName }}-rolebinding
+  name: {{ .Values.collector.appName }}-rolebinding
 subjects:
 - kind: ServiceAccount
-  name: {{ .Values.controller.appName }}-serviceaccount
+  name: {{ .Values.collector.appName }}-serviceaccount
   namespace: {{ .Release.Namespace }}
 roleRef:
   kind: ClusterRole
-  name: {{ .Values.controller.appName }}-role
+  name: {{ .Values.collector.appName }}-role
   apiGroup: rbac.authorization.k8s.io
 
