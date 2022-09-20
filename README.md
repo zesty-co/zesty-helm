@@ -33,8 +33,21 @@ The following table lists the configurable parameters of the zesty-disk chart an
 | registry  | The Docker registry used to pull images | "zestyco" |
 
 ## Usage
-In order to start utilising Zesty Disk in your cluster, after installing the chart, go ahead and create a `StatefulSet` (or add to an existing one) the label `ZestyDisk: true` **to its pods** (under `statefulset.spec.template.metadata.labels`).
-Once the pods are labeled, every new PV created (whether through the `volumeClaimTemplates` of the StatefulSet or another way) will start being tracked by the system.
+Once the chart is installed, a new [CRD](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/) is installed - "ZestfulSet". As the name suggest, a `ZestfulSet` (`zts` in short) is a custom resources that manages stateful workloads.
+
+A `ZestfulSet` simply holds a standard `StatefulSet` in the `StatefulSetSpec` field:
+
+```yaml
+apiVersion: apps.zesty.co/v1alpha1
+kind: ZestfulSet
+metadata:
+  name: zestfulset-sample
+spec:
+  statefulSetSpec:
+    # standard statefulset configuration...
+```
+
+In order to start utilizing a `ZestfulSet` in your cluster, go ahead and create it locally and deploy it into the cluster. Once it's created, the ZTS controller will manage the lifecycle of your stateful application and its storage.
 
 Here's an example yaml to get you started:
 
@@ -55,37 +68,40 @@ spec:
     ZestyDisk: "true"
     app: "demo"
 ---
-kind: StatefulSet
-apiVersion: apps/v1
+
+apiVersion: apps.zesty.co/v1alpha1
+kind: ZestfulSet
 metadata:
   name: demo-app-statefulset
 spec:
-  selector:
-    matchLabels:
-      ZestyDisk: "true"
-      app: "demo"
-  serviceName: "demo-app-service"
-  replicas: 1
-  template:
-    metadata:
-      labels:
+  statefulSetSpec:
+    selector:
+      matchLabels:
         app: "demo"
-        ZestyDisk: "true"
-    spec:
-      terminationGracePeriodSeconds: 10
-      containers:
-        - name: demo-app
-          image: my-demo-app:latest
-          volumeMounts:
-            - mountPath: "/zesty-disk"
-              name: storage
-  volumeClaimTemplates:
-  - metadata:
-      name: storage
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "zesty-storageclass"
-      resources:
-        requests:
-          storage: 15Gi
+    serviceName: "demo-app-service"
+    template:
+      metadata:
+        labels:
+          app: "demo"
+      spec:
+        terminationGracePeriodSeconds: 10
+        containers:
+          - name: demo-app
+            image: my-demo-app:latest
+            volumeMounts:
+              - mountPath: "/zesty-disk"
+                name: storage
+    volumeClaimTemplates:
+    - metadata:
+        name: storage
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: "zesty-storageclass"
+        resources:
+          requests:
+            storage: 15Gi
 ```
+
+## Monitoring
+The Zesty collector exposes a `/metrics` endpoint so that Prometheus (or other compatible metric collectors) could scrape and collect different exported values.
+In order to add the metrics to Prometheus, add a target by filtering the label `app=zesty-collector`.

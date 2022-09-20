@@ -16,7 +16,7 @@ index() {
 }
 
 release() {
-  gh release create "${bumped_version}" "${RELEASE_FILE}" --generate-notes --prerelease --title "New ZD release"
+  gh release create "${bumped_version}" "${RELEASE_FILE}" --generate-notes --prerelease --title "Releasing the ZestfulSet Operator"
 }
 
 clean_workspace() {
