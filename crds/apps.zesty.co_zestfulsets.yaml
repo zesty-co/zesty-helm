@@ -28,16 +28,6 @@ spec:
             type: object
           spec:
             properties:
-              dataSource:
-                properties:
-                  kind:
-                    type: string
-                  name:
-                    type: string
-                required:
-                - kind
-                - name
-                type: object
               nodeMetaData:
                 properties:
                   accountId:
@@ -3415,14 +3405,11 @@ spec:
             type: object
           status:
             properties:
-              cloneProcess:
-                type: string
               managedClaimTemplateNames:
                 additionalProperties:
                   type: integer
                 type: object
             required:
-            - cloneProcess
             - managedClaimTemplateNames
             type: object
         type: object
