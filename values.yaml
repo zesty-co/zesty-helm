@@ -1,6 +1,7 @@
 apikey: ""
 registry: zestyco
 debug: "false"
+namespace: "zestfulset-controller-system"
 
 cloud:
   name: "Amazon"
@@ -29,7 +30,6 @@ collector:
         cpu: "1"
       requests:
         cpu: "0.5"
-
   appName: zesty-collector
   logLevel: "INFO"
   image:

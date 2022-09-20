@@ -1,6 +1,7 @@
 apikey: ""
 registry: 577926974532.dkr.ecr.us-east-1.amazonaws.com
 debug: true
+namespace: "zestfulset-controller-system"
 
 cloud:
   name: "Amazon"
