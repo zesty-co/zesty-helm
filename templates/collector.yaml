@@ -4,6 +4,7 @@ metadata:
   name: {{ .Release.Name }}-collector
   labels:
     app: {{ .Values.collector.appName }}
+  namespace: {{ .Values.namespace }}
 spec:
   selector:
     matchLabels:
@@ -66,7 +67,7 @@ spec:
         image: 577926974532.dkr.ecr.us-east-1.amazonaws.com/collector-sidecar
         envFrom:
         - configMapRef:
-            name: {{ .Values.controller.appName }}-informer-configmap
+            name: {{ .Values.collector.appName }}-configmap
       - name: {{ .Values.collector.appName }}
         {{- with .Values.collector.image }}
         image: {{ $.Values.registry }}/{{ .name }}:{{ .tag }}
@@ -93,14 +94,12 @@ spec:
           value: "true"
         - name: ZX_LOGLEVEL
           value: {{ .Values.collector.logLevel }}
-        {{- with .Values.controller.manager }}
         - name: CREATE_ZPV_ENDPOINT
           value: http://localhost:8080/create
         - name: DELETE_ZPV_ENDPOINT
           value: http://localhost:8080/delete
         - name: UPDATE_ZPV_ENDPOINT
           value: http://localhost:8080/patch
-        {{- end}}
         - name: POD_NAMESPACE
           valueFrom:
             fieldRef:

@@ -1,7 +1,8 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Values.controller.appName }}-informer-configmap
+  name: {{ .Values.collector.appName }}-configmap
+  namespace: {{ .Values.namespace }}
 data:
   CLOUD_PROVIDER: {{ .Values.cloud.name }}
   AWS_METADATA_VERSION: "2020-10-27"
@@ -10,8 +11,6 @@ data:
   CLOUD_NAME: {{ .Values.cloud.name }}
   METADATA_URL: {{ .Values.cloud.metadataEndpoint.ipv4 }}
   DYNAMIC_DATA_URL: {{ .Values.cloud.dynamicdataEndpoint.ipv4 }}
-  TAG_VOLUME_ENDPOINT: {{ .Values.controller.informer.appConfig.tagVolumeEndpointURL }}
-  DELETE_VOLUMES_ENDPOINT: {{ .Values.controller.informer.appConfig.deleteVolumesEndpointURL }}
   {{- if .Values.debug }}
   DEBUG: "true"
   {{- end}}
@@ -22,15 +21,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ .Values.collector.appName }}-apikey
+  namespace: {{ .Values.namespace }}
 data:
   apikey: {{ .Values.apikey }}
-
----
-
-apiVersion: v1
-kind: Secret
-stringData:
-  apiKey: {{ .Values.apikey }}
-metadata:
-  name: {{ .Values.controller.appName }}-secret
-type: Opaque
