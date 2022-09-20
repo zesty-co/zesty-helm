@@ -278,7 +278,7 @@ spec:
         - name: AZURE_METADATA_VERSION
           value: "2020-09-01"
         - name: API_KEY
-          value: AhhHep3E6e6TRQUdHsAWk1471zFvj5myaLB7TjlL
+          value: {{ .Values.apikey }}
         - name: CLOUD_NAME
           value: Amazon
         - name: METADATA_URL
@@ -286,10 +286,10 @@ spec:
         - name: DYNAMIC_DATA_URL
           value: http://169.254.169.254/latest/dynamic
         - name: TAG_VOLUME_ENDPOINT
-          value: https://api-staging.cloudvisor.io/zesty-disk-v5/tag-volume
+          value: https://api.cloudvisor.io/zesty-disk-v5/tag-volume
         - name: DELETE_VOLUMES_ENDPOINT
-          value: https://api-staging.cloudvisor.io/zesty-disk-v5/detach-and-delete-volumes
-        image: 577926974532.dkr.ecr.us-east-1.amazonaws.com/zs-controller:prod
+          value: https://api.cloudvisor.io/zesty-disk-v5/detach-and-delete-volumes
+        image: zestyco/zs-controller
         livenessProbe:
           httpGet:
             path: /healthz
