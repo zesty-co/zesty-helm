@@ -3,14 +3,14 @@ prefixName: ""
 serviceAccount:
   create: true
   name: "zesty-serviceaccount"
-registry: "577926974532.dkr.ecr.us-west-2.amazonaws.com"
+registry: "672188301118.dkr.ecr.eu-west-1.amazonaws.com"
 imagePullSecrets: []
 provisioner:
   image:
     name: zd/k8s/controller
     tag: 1.1.46
 agent:
-  baseUrl: https://papze4fl14.execute-api.us-west-2.amazonaws.com/k8s
+  baseUrl: https://sedz7kc6sc.execute-api.eu-west-1.amazonaws.com/k8s
   apiKey: ""
   collector:
     image:
