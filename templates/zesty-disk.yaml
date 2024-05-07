@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "agent.name" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "agent.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "agent.name" . }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      hostPID: true
+      containers:
+        - name: agent
+          image: {{ include "collector.image" . }}:{{ .Values.agent.collector.image.tag }}
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: host-path-mnt
+              mountPath: /mnt
+            - name: host-path-dev
+              mountPath: /dev
+          securityContext:
+            privileged: true
+          env:
+            - name: ZESTY_BASE_URL
+              value: {{ .Values.agent.baseUrl | quote }}
+            - name: ZESTY_API_KEY
+              value: {{ .Values.agent.apiKey | quote }}
+        - name: sidecar
+          image: {{ include "sidecar.image" . }}:{{ .Values.agent.sidecar.image.tag }}
+          imagePullPolicy: Always
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: host-path-mnt
+          hostPath:
+            path: /mnt
+        - name: host-path-dev
+          hostPath:
+            path: /dev
