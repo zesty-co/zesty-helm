@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "properties": {
+    "agent": {
+      "description": "Container Agent Image",
+      "properties": {
+        "baseUrl": {
+          "description": "Zesty Backend Base API URL",
+          "type": "string",
+          "minLength": 5
+        },
+        "apiKey": {
+          "description": "Zesty Backend API Key",
+          "type": "string",
+          "minLength": 5
+        }
+      },
+      "type": "object",
+      "required": [
+        "baseUrl",
+        "apiKey"
+      ]
+    }
+  },
+  "title": "Values",
+  "type": "object"
+}

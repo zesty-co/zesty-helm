@@ -1,0 +1,3 @@
+registry: "672188301118.dkr.ecr.eu-west-1.amazonaws.com"
+agent:
+  baseUrl: https://sedz7kc6sc.execute-api.eu-west-1.amazonaws.com/k8s
