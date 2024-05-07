@@ -15,7 +15,7 @@ $ helm repo add zestyrepo https://zesty-co.github.io/zesty-helm
 $ helm repo update
 
 # Install the chart
-$ helm install zesty-pvc --set apikey=<API_KEY> zestyrepo/zesty-helm
+$ helm install zesty-pvc --set agent.apiKey=<API_KEY> zestyrepo/zesty
 ```
 
 ## Uninstalling the Chart
