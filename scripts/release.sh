@@ -2,6 +2,7 @@
 
 bump_version() {
   current_version=$(yq .version Chart.yaml)
+  echo "Releasing Current version : $current_version"
   bumped_version=$(echo "${current_version}")
   BUMPED=${bumped_version} yq -i '.version = strenv(BUMPED)' Chart.yaml
   RELEASE_FILE="zesty-${bumped_version}.tgz"
