@@ -8,7 +8,7 @@ imagePullSecrets: []
 provisioner:
   image:
     name: zd/k8s/controller
-    tag: 1.1.46
+    tag: 1.1.47
 agent:
   baseUrl: https://sedz7kc6sc.execute-api.eu-west-1.amazonaws.com/k8s
   apiKey: ""
