@@ -16,6 +16,8 @@ $ helm repo update
 
 # Install the chart
 $ helm install zesty-pvc --set agent.apiKey=<API_KEY> zestyrepo/zesty
+# If want to install also Prometheus Exporter container to expose Zesty Disk metrics install with `agent.prometheusExporter.port` variable that contains the port you want to expose the metrics on
+$ helm install zesty-pvc --set agent.apiKey=<API_KEY> --set agent.prometheusExporter.port=<PORT> zestyrepo/zesty
 ```
 
 ## Uninstalling the Chart

@@ -51,6 +51,14 @@ rules:
       - update
       - patch
   - apiGroups:
+      - "apps"
+    resources:
+      - statefulsets
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
       - storage.zesty.co
     resources:
       - disks

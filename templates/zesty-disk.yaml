@@ -26,6 +26,8 @@ spec:
               mountPath: /mnt
             - name: host-path-dev
               mountPath: /dev
+            - name: shared
+              mountPath: /host
           securityContext:
             privileged: true
           env:
@@ -36,6 +38,17 @@ spec:
         - name: sidecar
           image: {{ include "sidecar.image" . }}:{{ .Values.agent.sidecar.image.tag }}
           imagePullPolicy: Always
+        {{- if .Values.agent.prometheusExporter.port }}
+        - name: prometheus-exporter
+          image: {{ include "prometheusExporter.image" . }}:{{ .Values.agent.prometheusExporter.image.tag }}
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: shared
+              mountPath: /host
+          env:
+            - name: PROMETHEUS_EXPORTER_PORT
+              value: {{ .Values.agent.prometheusExporter.port | quote}}
+        {{- end }}
       terminationGracePeriodSeconds: 30
       volumes:
         - name: host-path-mnt
@@ -44,3 +57,5 @@ spec:
         - name: host-path-dev
           hostPath:
             path: /dev
+        - name: shared
+          emptyDir: {}
