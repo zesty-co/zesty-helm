@@ -18,6 +18,10 @@
 {{- printf "%s/%s" .Values.registry .Values.agent.sidecar.image.name }}
 {{- end }}
 
+{{- define "prometheusExporter.image" -}}
+{{- printf "%s/%s" .Values.registry .Values.agent.prometheusExporter.image.name }}
+{{- end }}
+
 {{- define "provisioner.name" -}}
 {{- printf "%s-provisioner" (include "fullname" .) | trunc 63 | trimSuffix "-" }}
 {{- end }}
