@@ -8,20 +8,22 @@ imagePullSecrets: []
 provisioner:
   image:
     name: zd/k8s/controller
-    tag: 1.1.51
+    tag: 1.1.57
 agent:
   baseUrl: https://sedz7kc6sc.execute-api.eu-west-1.amazonaws.com/k8s
   apiKey: ""
   collector:
     image:
       name: zd/k8s/collector
-      tag: 1.0.36
+      tag: 1.0.39
   sidecar:
     image:
       name: zd/k8s/sidecar
-      tag: 1.3.14
+      tag: 1.3.19
   prometheusExporter:
     image:
       name: zd/k8s/prometheus-exporter
       tag: 1.0.0
     port: ""
+nodeSelector: {}
+tolerations: {}

@@ -12,6 +12,14 @@ spec:
       labels:
         app: {{ include "agent.name" . }}
     spec:
+{{- with .Values.tolerations }}
+      tolerations:
+{{- toYaml . | nindent 6 }}
+{{- end }}
+{{- with .Values.nodeSelector }}
+      nodeSelector:
+{{- toYaml . | nindent 8 }}
+{{- end }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -33,8 +41,15 @@ spec:
           env:
             - name: ZESTY_BASE_URL
               value: {{ .Values.agent.baseUrl | quote }}
+          {{- if ne .Values.agent.apiKey ""}}
             - name: ZESTY_API_KEY
               value: {{ .Values.agent.apiKey | quote }}
+          {{- end }}
+          {{- if eq .Values.agent.apiKey "" }}
+          envFrom:
+          - secretRef:
+                name: {{ .Values.agent.secret.name | quote }}
+           {{- end }}
         - name: sidecar
           image: {{ include "sidecar.image" . }}:{{ .Values.agent.sidecar.image.tag }}
           imagePullPolicy: Always
