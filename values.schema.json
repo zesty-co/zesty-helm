@@ -8,11 +8,6 @@
           "description": "Zesty Backend Base API URL",
           "type": "string",
           "minLength": 5
-        },
-        "apiKey": {
-          "description": "Zesty Backend API Key",
-          "type": "string",
-          "minLength": 5
         }
       },
       "type": "object",

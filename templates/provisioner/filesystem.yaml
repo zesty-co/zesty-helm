@@ -1,0 +1,167 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.11.3
+  creationTimestamp: null
+  name: filesystems.storage.zesty.co
+spec:
+  group: storage.zesty.co
+  names:
+    kind: Filesystem
+    listKind: FilesystemList
+    plural: filesystems
+    shortNames:
+      - fs
+    singular: filesystem
+  scope: Namespaced
+  versions:
+    - name: v1alpha1
+      schema:
+        openAPIV3Schema:
+          description: Filesystem is the Schema for the filesystems API
+          properties:
+            apiVersion:
+              description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+              type: string
+            kind:
+              description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+              type: string
+            metadata:
+              type: object
+            spec:
+              description: FilesystemSpec defines the desired state of Filesystem
+              properties:
+                dummyPvName:
+                  description: The dummy PV name that satisfies the PVC
+                  type: string
+                filesystemId:
+                  description: The filesystem ID used to identity and track it
+                  type: string
+                mountPath:
+                  description: The FS mount path on the node
+                  type: string
+                node:
+                  description: The node hosting the filesystem
+                  type: string
+                pvcName:
+                  description: The original PVC which is backed by this object
+                  type: string
+                resources:
+                  description: The initial resources requests of the PVC
+                  properties:
+                    claims:
+                      description: "Claims lists the names of resources, defined in
+                      spec.resourceClaims, that are used by this container. \n This
+                      is an alpha field and requires enabling the DynamicResourceAllocation
+                      feature gate. \n This field is immutable. It can only be set
+                      for containers."
+                      items:
+                        description: ResourceClaim references one entry in PodSpec.ResourceClaims.
+                        properties:
+                          name:
+                            description: Name must match the name of one entry in pod.spec.resourceClaims
+                              of the Pod where this field is used. It makes that resource
+                              available inside a container.
+                            type: string
+                        required:
+                          - name
+                        type: object
+                      type: array
+                      x-kubernetes-list-map-keys:
+                        - name
+                      x-kubernetes-list-type: map
+                    limits:
+                      additionalProperties:
+                        anyOf:
+                          - type: integer
+                          - type: string
+                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                        x-kubernetes-int-or-string: true
+                      description: 'Limits describes the maximum amount of compute resources
+                      allowed. More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/'
+                      type: object
+                    requests:
+                      additionalProperties:
+                        anyOf:
+                          - type: integer
+                          - type: string
+                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                        x-kubernetes-int-or-string: true
+                      description: 'Requests describes the minimum amount of compute
+                      resources required. If Requests is omitted for a container,
+                      it defaults to Limits if that is explicitly specified, otherwise
+                      to an implementation-defined value. Requests cannot exceed Limits.
+                      More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/'
+                      type: object
+                  type: object
+                volumeAttachments:
+                  description: A list of VolumeAttachments names managed in the FS
+                  items:
+                    type: string
+                  type: array
+              required:
+                - dummyPvName
+                - filesystemId
+                - mountPath
+                - node
+                - pvcName
+              type: object
+            status:
+              description: FilesystemStatus defines the observed state of Filesystem
+              properties:
+                migratingResources:
+                  description: MigratingResources keeps base64 of the resources being
+                    deleted and recreated during migration.
+                  type: string
+                mountingPod:
+                  description: MountingPod is the pod name managed by the filesystem
+                  type: string
+                status:
+                  description: FileSystemStatus describes the FS state
+                  enum:
+                    - Init
+                    - Mounted
+                    - WaitingForActions
+                    - MigrationInit
+                    - MigrationScheduled
+                    - WaitingForNodeMigration
+                    - WaitingForFsRelease
+                  type: string
+                storageSize:
+                  anyOf:
+                    - type: integer
+                    - type: string
+                  description: StorageSize is the dynamically updating total size of
+                    the FilesystemStatus
+                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                  x-kubernetes-int-or-string: true
+                waitingForActions:
+                  description: WaitingForActions is a list of tasks to be taken care
+                    of
+                  items:
+                    properties:
+                      type:
+                        description: ActionType describes the FS state
+                        enum:
+                          - WaitingForVolumeAddition
+                          - WaitingForVolumeExtension
+                          - WaitingForVolumeRemoval
+                        type: string
+                      volumeAttachmentName:
+                        type: string
+                      volumeId:
+                        type: string
+                    type: object
+                  type: array
+              type: object
+          type: object
+      served: true
+      storage: true
+      subresources:
+        status: {}
