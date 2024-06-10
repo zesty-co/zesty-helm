@@ -8,14 +8,16 @@ imagePullSecrets: []
 provisioner:
   image:
     name: zd/k8s/controller
-    tag: 1.1.57
+    tag: 1.1.60
 agent:
+  secret:
+    name: zesty-disk-agent-cred
   baseUrl: https://sedz7kc6sc.execute-api.eu-west-1.amazonaws.com/k8s
-  apiKey: ""
+  apiKey: "" # if you put the value here, the secret won't be used.
   collector:
     image:
       name: zd/k8s/collector
-      tag: 1.0.39
+      tag: 1.0.41
   sidecar:
     image:
       name: zd/k8s/sidecar
@@ -27,3 +29,4 @@ agent:
     port: ""
 nodeSelector: {}
 tolerations: {}
+
