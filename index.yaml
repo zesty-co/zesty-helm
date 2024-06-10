@@ -2,13 +2,13 @@ apiVersion: v1
 entries:
   zesty:
   - apiVersion: v2
-    appVersion: 1.0.220
-    created: "2024-06-03T17:53:21.705942+03:00"
+    appVersion: 1.0.225
+    created: "2024-06-10T12:32:39.863567+03:00"
     description: A Helm chart for Kubernetes
-    digest: 2693be8d7a0dcc8f3284bd812ddedd10d277f2706726c88122b3dc471cd41d51
+    digest: dc5e13fec318390400f89c8a71fbb787fa6256c21405081825ba84f104e80e7f
     name: zesty
     type: application
     urls:
-    - https://github.com/zesty-co/zesty-helm/releases/download/1.0.220/zesty-1.0.220.tgz
-    version: 1.0.220
-generated: "2024-06-03T17:53:21.705585+03:00"
+    - https://github.com/zesty-co/zesty-helm/releases/download/1.0.225/zesty-1.0.225.tgz
+    version: 1.0.225
+generated: "2024-06-10T12:32:39.86315+03:00"
