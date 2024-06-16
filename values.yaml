@@ -17,7 +17,7 @@ agent:
   collector:
     image:
       name: zd/k8s/collector
-      tag: 1.0.41
+      tag: 1.0.42
   sidecar:
     image:
       name: zd/k8s/sidecar
