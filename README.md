@@ -5,25 +5,45 @@ A Helm package to install [Zesty Disk's](https://zesty.co/products/zesty-disk/) 
 * Kubernetes 1.7+
 
 ## Installation
-```
-## IMPORTANT: Zesty requires an API key in order to function properly.
+Acquire API Key by: (going to this url: ..., clicking on whatever)
+// Zesty requires an API key in order to function properly. # TODO: How do I get this API Key?
 
 # Add the Zesty repo to your helm client
-$ helm repo add zestyrepo https://zesty-co.github.io/zesty-helm
+```bash
+helm repo add zestyrepo https://zesty-co.github.io/zesty-helm
+```
 
 # Update the repo if it's already configured
-$ helm repo update
+```bash
+helm repo update
+```
 
 # Install the chart
-$ helm install zesty-pvc --set agent.apiKey=<API_KEY> zestyrepo/zesty
-# If want to install also Prometheus Exporter container to expose Zesty Disk metrics install with `agent.prometheusExporter.port` variable that contains the port you want to expose the metrics on
-$ helm install zesty-pvc --set agent.apiKey=<API_KEY> --set agent.prometheusExporter.port=<PORT> zestyrepo/zesty
+```bash
+helm install zesty-pvc --set agent.apiKey=<API_KEY> zestyrepo/zesty
+```
+
+### Helm installation args
+> All args are set using helm's `set` command: `--set agent.apiKey=<API_KEY>`
+
+| Option                           | Description                                       | Default           |
+|----------------------------------|---------------------------------------------------|-------------------|
+| `agent.apiKey`                   | apiKey received by (#: TODO: Complete this )      |                   |
+| `agent.prometheusExporter.port`  | Prometheus port ( #: TODO: See more info here )   |                   |
+| `defaultStorageClassProvisioner` | If storageClassName is not defined, this value will take affect and be decided upon the first occurance of the StorageClass that has a provisioner equals to `defaultStorageClassProvisioner`     | `ebs.csi.aws.com` |
+| `storageClassName`               | Customize StorageClass name instead of using                `defaultStorageClassProvisioner`'s value                                                                                  |                   |
+
+
+## Exposing Zesty Disk Metrics
+Zesty Disk is able to expose (# TODO: These metrics) by setting `agent.prometheusExporter.port` and (# TODO: choosing a random unusued port??)
+```bash
+helm install zesty-pvc --set agent.apiKey=<API_KEY> --set agent.prometheusExporter.port=<PORT> zestyrepo/zesty
 ```
 
 ## Uninstalling the Chart
 To uninstall/delete:
 ```bash
-$ helm delete zesty-pvc
+helm delete zesty-pvc
 ```
 
 ## Monitoring
