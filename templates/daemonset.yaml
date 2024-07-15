@@ -1,16 +1,21 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: {{ include "agent.name" . }}
+  name: {{ include "zestyStorageAgent.name" . }}
   namespace: {{ .Release.Namespace }}
 spec:
   selector:
     matchLabels:
-      app: {{ include "agent.name" . }}
+      app: {{ include "zestyStorageAgent.name" . }}
   template:
     metadata:
       labels:
-        app: {{ include "agent.name" . }}
+        app: {{ include "zestyStorageAgent.name" . }}
+      {{- if .Values.zestyStorageAgent.prometheusExporter.port }}
+      annotations:
+        prometheus.io/port: {{ .Values.zestyStorageAgent.prometheusExporter.port | quote}}
+        prometheus.io/scrape: "true"
+      {{- end }}
     spec:
 {{- with .Values.tolerations }}
       tolerations:
@@ -20,15 +25,24 @@ spec:
       nodeSelector:
 {{- toYaml . | nindent 8 }}
 {{- end }}
+{{- with .Values.affinity }}
+      affinity:
+{{- toYaml . | nindent 8 }}
+{{- end }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      priorityClassName: {{ .Values.zestyStorageAgent.priorityClassName | default "system-node-critical" }}
       hostPID: true
       containers:
         - name: agent
-          image: {{ include "collector.image" . }}:{{ .Values.agent.collector.image.tag }}
+          image: {{ include "agent.image" . }}:{{ .Values.zestyStorageAgent.agent.image.tag }}
           imagePullPolicy: Always
+{{- with .Values.zestyStorageAgent.agent.resources }}
+          resources:
+{{- toYaml . | nindent 12 }}
+{{- end }}
           volumeMounts:
             - name: host-path-mnt
               mountPath: /mnt
@@ -40,29 +54,35 @@ spec:
             privileged: true
           env:
             - name: ZESTY_BASE_URL
-              value: {{ .Values.agent.baseUrl | quote }}
-          {{- if ne .Values.agent.apiKey ""}}
+              value: {{ .Values.zestyStorageAgent.baseUrl | quote }}
+          {{- if ne .Values.zestyStorageAgent.apiKey ""}}   
             - name: ZESTY_API_KEY
-              value: {{ .Values.agent.apiKey | quote }}
+              value: {{ .Values.zestyStorageAgent.apiKey | quote }}
           {{- end }}
-          {{- if eq .Values.agent.apiKey "" }}
+          {{- if eq .Values.zestyStorageAgent.apiKey "" }}
           envFrom:
           - secretRef:
-                name: {{ .Values.agent.secret.name | quote }}
+                name: {{ .Values.zestyStorageAgent.secret.name | quote }}
            {{- end }}
-        - name: sidecar
-          image: {{ include "sidecar.image" . }}:{{ .Values.agent.sidecar.image.tag }}
+        - name: manager
+          image: {{ include "manager.image" . }}:{{ .Values.zestyStorageAgent.manager.image.tag }}
           imagePullPolicy: Always
-        {{- if .Values.agent.prometheusExporter.port }}
+{{- with .Values.zestyStorageAgent.manager.resources }}
+          resources:
+{{- toYaml . | nindent 12 }}
+{{- end }}
+        {{- if .Values.zestyStorageAgent.prometheusExporter.port }}
         - name: prometheus-exporter
-          image: {{ include "prometheusExporter.image" . }}:{{ .Values.agent.prometheusExporter.image.tag }}
+          image: {{ include "prometheusExporter.image" . }}:{{ .Values.zestyStorageAgent.prometheusExporter.image.tag }}
           imagePullPolicy: Always
           volumeMounts:
             - name: shared
               mountPath: /host
           env:
             - name: PROMETHEUS_EXPORTER_PORT
-              value: {{ .Values.agent.prometheusExporter.port | quote}}
+              value: {{ .Values.zestyStorageAgent.prometheusExporter.port | quote }}
+          ports:
+            - containerPort: {{ .Values.zestyStorageAgent.prometheusExporter.port }}
         {{- end }}
       terminationGracePeriodSeconds: 30
       volumes:

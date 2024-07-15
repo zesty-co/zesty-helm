@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ .Release.Name }}-existing-filesystems-validator"
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  restartPolicy: Never
+  containers:
+  - name: assert-no-zesty-sc-references
+    image: "bitnami/kubectl:1.27.14-debian-12-r2"
+    command: ["/bin/bash"]
+    args:
+      - "-c"
+      - |
+        #!/bin/bash
+        existing_filesystems=$(kubectl get filesystems -A --no-headers -o custom-columns=NAME:.metadata.name |  xargs | sed '/^$/d' | sed -e 's/ /, /g')
+        if [ -n "$existing_filesystems" ]; then
+          printf '%s\n' "[ERROR] Failed to perform 'helm uninstall zesty-pvc' due to the following existing file systems: $existing_filesystems" >&2
+          printf '%s\n' "Before running the command again, update all workloads utilizing Zesty storage class (zesty-sc)." >&2
+          exit 1
+        else
+          exit 0
+        fi

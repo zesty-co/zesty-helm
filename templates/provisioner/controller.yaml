@@ -1,21 +1,13 @@
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  labels:
-    {{- include "chart-template.labels" . | nindent 4 }}
-  name: {{ include "chart-template.serviceAccountName" . }}
-  namespace: {{ .Release.Namespace }}
----
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   labels:
     {{- include "chart-template.labels" . | nindent 4 }}
-  name: {{ include "provisioner.name" . }}
+  name: {{ include "zestyStorageOperator.name" . }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: {{ include "provisioner.name" . }}
+  name: {{ include "zestyStorageOperator.name" . }}
 subjects:
   - kind: ServiceAccount
     name: {{ include "chart-template.serviceAccountName" . }}
@@ -26,7 +18,7 @@ kind: ClusterRole
 metadata:
   labels:
     {{- include "chart-template.labels" . | nindent 4 }}
-  name: {{ include "provisioner.name" . }}-proxy-role
+  name: {{ include "zestyStorageOperator.name" . }}-proxy-role
 rules:
   - apiGroups:
       - authentication.k8s.io
@@ -46,11 +38,11 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     {{- include "chart-template.labels" . | nindent 4 }}
-  name: {{ include "provisioner.name" . }}-proxy
+  name: {{ include "zestyStorageOperator.name" . }}-proxy
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: {{ include "provisioner.name" . }}-proxy
+  name: {{ include "zestyStorageOperator.name" . }}-proxy
 subjects:
   - kind: ServiceAccount
     name: {{ include "chart-template.serviceAccountName" . }}
@@ -61,7 +53,7 @@ kind: Role
 metadata:
   labels:
     {{- include "chart-template.labels" . | nindent 4 }}
-  name: {{ include "provisioner.name" . }}-leader-election
+  name: {{ include "zestyStorageOperator.name" . }}-leader-election
   namespace: {{ .Release.Namespace }}
 rules:
   - apiGroups:
@@ -101,12 +93,12 @@ kind: RoleBinding
 metadata:
   labels:
     {{- include "chart-template.labels" . | nindent 4 }}
-  name: {{ include "provisioner.name" . }}-leader-election
+  name: {{ include "zestyStorageOperator.name" . }}-leader-election
   namespace: {{ .Release.Namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: {{ include "provisioner.name" . }}-leader-election
+  name: {{ include "zestyStorageOperator.name" . }}-leader-election
 subjects:
   - kind: ServiceAccount
     name: {{ include "chart-template.serviceAccountName" . }}
@@ -117,29 +109,12 @@ kind: ClusterRole
 metadata:
   labels:
     {{- include "chart-template.labels" . | nindent 4 }}
-  name: {{ include "provisioner.name" . }}-metrics-reader
+  name: {{ include "zestyStorageOperator.name" . }}-metrics-reader
 rules:
   - nonResourceURLs:
       - /metrics
     verbs:
       - get
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    control-plane: controller-manager
-    {{- include "chart-template.labels" . | nindent 4 }}
-  name: zesty-metrics
-  namespace: {{ .Release.Namespace }}
-spec:
-  ports:
-    - name: https
-      port: 8443
-      protocol: TCP
-      targetPort: https
-  selector:
-    control-plane: controller-manager
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
@@ -189,7 +164,7 @@ metadata:
   labels:
     control-plane: zesty-disk-controller
     {{- include "chart-template.labels" . | nindent 4 }}
-  name: {{ include "provisioner.name" . }}
+  name: {{ include "zestyStorageOperator.name" . }}
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: 1
@@ -199,7 +174,7 @@ spec:
   template:
     metadata:
       annotations:
-        kubectl.kubernetes.io/default-container: manager
+        kubectl.kubernetes.io/default-container: storage-operator
       labels:
         control-plane: controller-manager
     spec:
@@ -248,12 +223,13 @@ spec:
               drop:
                 - ALL
         - args:
+            - --releaseNamespace={{ .Release.Namespace }}
             - --health-probe-bind-address=:8081
             - --metrics-bind-address=127.0.0.1:8080
             - --leader-elect
           command:
             - /manager
-          image: {{ include "provisioner.image" . }}:{{ .Values.provisioner.image.tag }}
+          image: {{ include "zestyStorageOperator.image" . }}:{{ .Values.zestyStorageOperator.image.tag }}
           imagePullPolicy: Always
           livenessProbe:
             httpGet:
@@ -261,7 +237,7 @@ spec:
               port: 8081
             initialDelaySeconds: 15
             periodSeconds: 20
-          name: manager
+          name: storage-operator
           readinessProbe:
             httpGet:
               path: /readyz

@@ -151,7 +151,6 @@ spec:
                         enum:
                           - WaitingForVolumeAddition
                           - WaitingForVolumeExtension
-                          - WaitingForVolumeRemoval
                         type: string
                       volumeAttachmentName:
                         type: string

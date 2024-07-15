@@ -1,32 +1,61 @@
 # Prod values of the chart, it will be merged with env specific values into values.yaml
-prefixName: ""
-serviceAccount:
-  create: true
-  name: "zesty-serviceaccount"
-registry: "672188301118.dkr.ecr.eu-west-1.amazonaws.com"
-imagePullSecrets: []
-provisioner:
+zestyStorageOperator:
   image:
-    name: zd/k8s/controller
-    tag: 1.1.60
-agent:
+    name: zd/k8s/storage-operator
+    tag: 1.1.74
+zestyStorageAgent:
   secret:
     name: zesty-disk-agent-cred
   baseUrl: https://sedz7kc6sc.execute-api.eu-west-1.amazonaws.com/k8s
   apiKey: "" # if you put the value here, the secret won't be used.
-  collector:
+  priorityClassName: system-node-critical
+  agent:
     image:
-      name: zd/k8s/collector
-      tag: 1.0.42
-  sidecar:
+      name: zd/k8s/agent
+      tag: 1.0.45
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        memory: 256Mi
+  manager:
     image:
-      name: zd/k8s/sidecar
-      tag: 1.3.19
+      name: zd/k8s/manager
+      tag: 1.3.22
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        memory: 256Mi
   prometheusExporter:
     image:
       name: zd/k8s/prometheus-exporter
       tag: 1.0.0
     port: ""
+admission:
+  schedulerName: default-scheduler
+  mutator:
+    replicas: 2
+    port: 8443
+    image:
+      name: zd/k8s/mutator
+      tag: 1.0.4
+  secret:
+    name: ""
+rbac:
+  mutator:
+    clusterRole:
+      name: mutatingwebhookconfigurations-deleter
+serviceAccount:
+  create: true
+  name: "zesty-serviceaccount"
 nodeSelector: {}
 tolerations: {}
+affinity: {}
+storageClassName: ""
+prefixName: ""
+registry: "672188301118.dkr.ecr.eu-west-1.amazonaws.com"
+imagePullSecrets: []
 

@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "admission.mutator.name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ include "admission.mutator.name" . }}
+spec:
+  replicas: {{ .Values.admission.mutator.replicas | default 1 }}
+  selector:
+    matchLabels:
+      app: {{ include "admission.mutator.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "admission.mutator.name" . }}
+    spec:
+      initContainers:
+        - name: init
+          image: {{ include "admission.mutator.image" . }}:init.{{ .Values.admission.mutator.image.tag }}
+          imagePullPolicy: Always
+          args:
+            - -commonName={{ include "admission.mutator.name" . }}
+            - -namespace={{ .Release.Namespace }}
+            - -secretName={{ include "admission.secret.name" . }}
+            - -mutatorPort={{ include "admission.mutator.port" . }}
+      containers:
+        - name: mutator
+          image: {{ include "admission.mutator.image" . }}:{{ .Values.admission.mutator.image.tag }}
+          imagePullPolicy: Always
+          args:
+            - -port={{ include "admission.mutator.port" . }}
+            - -certFile=/etc/secret/tls.crt
+            - -keyFile=/etc/secret/tls.key
+            - -schedulerName={{ .Values.admission.schedulerName | default "default-scheduler" }}
+          ports:
+            - containerPort: {{ include "admission.mutator.port" . }}
+          resources:
+            requests:
+              cpu: 200m
+              memory: 128Mi
+          volumeMounts:
+            - name: tls-volume
+              mountPath: "/etc/secret"
+              readOnly: true
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: "kubernetes.io/hostname"
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app: {{ include "admission.mutator.name" . }}
+        - maxSkew: 1
+          topologyKey: "topology.kubernetes.io/zone"
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app: {{ include "admission.mutator.name" . }}
+      volumes:
+        - name: tls-volume
+          secret:
+            secretName: {{ include "admission.secret.name" . }}
+            optional: true
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "chart-template.serviceAccountName" . }}
+      securityContext:
+        runAsNonRoot: true
