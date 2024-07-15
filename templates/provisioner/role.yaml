@@ -2,7 +2,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ include "provisioner.name" . }}
+  name: {{ include "zestyStorageOperator.name" . }}
 rules:
   - apiGroups:
       - ""
@@ -116,3 +116,13 @@ rules:
       - get
       - patch
       - update
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - list
+      - watch
+  - resources: ["csinodes"]
+    verbs: ["get", "watch", "list"]
+    apiGroups: ["storage.k8s.io"]

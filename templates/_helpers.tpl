@@ -6,28 +6,32 @@
 {{- end }}
 {{- end }}
 
-{{- define "provisioner.image" -}}
-{{- printf "%s/%s" .Values.registry .Values.provisioner.image.name }}
+{{- define "zestyStorageOperator.image" -}}
+{{- printf "%s/%s" .Values.registry .Values.zestyStorageOperator.image.name }}
 {{- end }}
 
-{{- define "collector.image" -}}
-{{- printf "%s/%s" .Values.registry .Values.agent.collector.image.name }}
+{{- define "agent.image" -}}
+{{- printf "%s/%s" .Values.registry .Values.zestyStorageAgent.agent.image.name }}
 {{- end }}
 
-{{- define "sidecar.image" -}}
-{{- printf "%s/%s" .Values.registry .Values.agent.sidecar.image.name }}
+{{- define "manager.image" -}}
+{{- printf "%s/%s" .Values.registry .Values.zestyStorageAgent.manager.image.name }}
 {{- end }}
 
 {{- define "prometheusExporter.image" -}}
-{{- printf "%s/%s" .Values.registry .Values.agent.prometheusExporter.image.name }}
+{{- printf "%s/%s" .Values.registry .Values.zestyStorageAgent.prometheusExporter.image.name }}
 {{- end }}
 
-{{- define "provisioner.name" -}}
-{{- printf "%s-provisioner" (include "fullname" .) | trunc 63 | trimSuffix "-" }}
+{{- define "config.name" -}}
+{{- printf "%s" (include "fullname" .) | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
-{{- define "agent.name" -}}
-{{- printf "%s-agent" (include "fullname" .) | trunc 63 | trimSuffix "-" }}
+{{- define "zestyStorageOperator.name" -}}
+{{- printf "%s-storage-operator" (include "fullname" .) | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{- define "zestyStorageAgent.name" -}}
+{{- printf "zesty-storage-agent" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{- define "chart-template.chart" -}}
@@ -57,4 +61,22 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
+{{- end }}
+
+{{/* MUTATOR */}}
+
+{{- define "admission.mutator.name" -}}
+{{- printf "%s-mutator" (include "fullname" .) | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{- define "admission.secret.name" -}}
+{{- .Values.admission.secret.name | default (printf "%s-admission" (include "fullname" .) | trunc 63 | trimSuffix "-") }}
+{{- end }}
+
+{{- define "admission.mutator.image" -}}
+{{- printf "%s/%s" .Values.registry .Values.admission.mutator.image.name }}
+{{- end }}
+
+{{- define "admission.mutator.port" -}}
+{{- default 8443 .Values.admission.mutator.port }}
 {{- end }}
