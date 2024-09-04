@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    component: scheduler
+    tier: control-plane
+  name: {{ include "extender.name" . }}
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "extender.name" . }}
+      component: scheduler
+      tier: control-plane
+  replicas: {{ .Values.scheduler.replicas }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "extender.name" . }}
+        component: scheduler
+        tier: control-plane
+        version: second
+    spec:
+      serviceAccountName: {{ include "extender.name" . }}
+      containers:
+        - name: kube-{{ include "scheduler.name" . }}
+          image: public.ecr.aws/eks-distro/kubernetes/kube-scheduler:v{{(semver .Capabilities.KubeVersion.GitVersion).Major}}.{{(semver .Capabilities.KubeVersion.GitVersion).Minor}}.0-eks-{{(semver .Capabilities.KubeVersion.GitVersion).Major}}-{{(semver .Capabilities.KubeVersion.GitVersion).Minor}}-latest
+          command:
+            - /usr/local/bin/kube-scheduler
+            - --config=/etc/kubernetes/scheduler-extender/scheduler-extender-config.yaml
+            - --v={{ default 1 .Values.scheduler.logLevel }}
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 10259
+              scheme: HTTPS
+            initialDelaySeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 10259
+              scheme: HTTPS
+          resources:
+            requests:
+              cpu: '0.1'
+          securityContext:
+            privileged: false
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/kubernetes/scheduler-extender
+        - name: kube-{{ include "extender.name" . }}
+          image: {{ include "extender.image" . }}:{{ .Values.extender.image.tag }}
+          args:
+            - --port={{ include "extender.port" . }}
+          {{ include "delve" . | nindent 10 }}
+          imagePullPolicy: Always
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: "kubernetes.io/hostname"
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app: {{ include "extender.name" . }}
+        - maxSkew: 1
+          topologyKey: "topology.kubernetes.io/zone"
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app: {{ include "extender.name" . }}
+      hostNetwork: false
+      hostPID: false
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ include "extender.name" . }}

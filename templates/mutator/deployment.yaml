@@ -32,7 +32,7 @@ spec:
             - -port={{ include "admission.mutator.port" . }}
             - -certFile=/etc/secret/tls.crt
             - -keyFile=/etc/secret/tls.key
-            - -schedulerName={{ .Values.admission.schedulerName | default "default-scheduler" }}
+            - -schedulerName={{ include "scheduler.name" . }}
           ports:
             - containerPort: {{ include "admission.mutator.port" . }}
           resources:
@@ -52,7 +52,7 @@ spec:
               app: {{ include "admission.mutator.name" . }}
         - maxSkew: 1
           topologyKey: "topology.kubernetes.io/zone"
-          whenUnsatisfiable: DoNotSchedule
+          whenUnsatisfiable: ScheduleAnyway
           labelSelector:
             matchLabels:
               app: {{ include "admission.mutator.name" . }}

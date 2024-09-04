@@ -1,0 +1,52 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "extender.name" . }}-kube-scheduler
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "extender.name" . }}
+    namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: system:kube-scheduler
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "extender.name" . }}-volume-scheduler
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "extender.name" . }}
+    namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: system:volume-scheduler
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "extender.name" . }}-extension-apiserver-authentication-reader
+  namespace: kube-system
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "extender.name" . }}
+    namespace: kube-system
+roleRef:
+  kind: Role
+  name: extension-apiserver-authentication-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "extender.name" . }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "extender.name" . }}
+    namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: {{ include "extender.name" . }}
+  apiGroup: rbac.authorization.k8s.io
