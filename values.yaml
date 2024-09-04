@@ -1,8 +1,9 @@
 # Prod values of the chart, it will be merged with env specific values into values.yaml
+
 zestyStorageOperator:
   image:
     name: zd/k8s/storage-operator
-    tag: 1.1.78
+    tag: 1.2.0
 zestyStorageAgent:
   secret:
     name: zesty-disk-agent-cred
@@ -12,7 +13,7 @@ zestyStorageAgent:
   agent:
     image:
       name: zd/k8s/agent
-      tag: 1.0.49
+      tag: 1.0.55
     resources:
       requests:
         cpu: 100m
@@ -22,7 +23,7 @@ zestyStorageAgent:
   manager:
     image:
       name: zd/k8s/manager
-      tag: 1.3.27
+      tag: 1.3.32
     resources:
       requests:
         cpu: 100m
@@ -32,10 +33,10 @@ zestyStorageAgent:
   prometheusExporter:
     image:
       name: zd/k8s/prometheus-exporter
-      tag: 1.0.0
+      tag: 1.1.2
     port: ""
 admission:
-  schedulerName: default-scheduler
+  schedulerName: zesty-scheduler
   mutator:
     replicas: 2
     port: 8443
@@ -44,6 +45,14 @@ admission:
       tag: 1.0.4
   secret:
     name: ""
+scheduler:
+  replicas: 2
+  logLevel: 1
+extender:
+  image:
+    name: zd/k8s/extender
+    tag: 1.2.0
+  port: 8888
 rbac:
   mutator:
     clusterRole:
@@ -58,4 +67,3 @@ storageClassName: ""
 prefixName: ""
 registry: "672188301118.dkr.ecr.eu-west-1.amazonaws.com"
 imagePullSecrets: []
-

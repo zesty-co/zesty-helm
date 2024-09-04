@@ -63,7 +63,17 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 {{- end }}
 
+{{/*************/}}
+{{/* SCHEDULER */}}
+{{/*************/}}
+
+{{- define "scheduler.name" -}}
+{{- default "zesty-scheduler" .Values.admission.schedulerName }}
+{{- end }}
+
+{{/***********/}}
 {{/* MUTATOR */}}
+{{/***********/}}
 
 {{- define "admission.mutator.name" -}}
 {{- printf "%s-mutator" (include "fullname" .) | trunc 63 | trimSuffix "-" }}
@@ -79,4 +89,28 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 
 {{- define "admission.mutator.port" -}}
 {{- default 8443 .Values.admission.mutator.port }}
+{{- end }}
+
+{{/************/}}
+{{/* EXTENDER */}}
+{{/************/}}
+
+{{- define "extender.name" -}}
+{{- printf "%s-extender" (include "fullname" .) | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{- define "extender.image" -}}
+{{- printf "%s/%s" .Values.registry .Values.extender.image.name }}
+{{- end }}
+
+{{- define "extender.port" -}}
+{{- default 8888 .Values.extender.port }}
+{{- end }}
+
+{{- define "delve" -}}
+{{- if hasSuffix "debug" .Values.extender.image.tag }}
+ports:
+- name: delve
+  containerPort: 40000
+{{- end }}
 {{- end }}
