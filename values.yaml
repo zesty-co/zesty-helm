@@ -33,7 +33,7 @@ zestyStorageAgent:
   prometheusExporter:
     image:
       name: zd/k8s/prometheus-exporter
-      tag: 1.1.2
+      tag: 1.1.3
     port: ""
 admission:
   schedulerName: zesty-scheduler
