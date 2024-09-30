@@ -3,11 +3,11 @@ entries:
   zesty:
   - apiVersion: v2
     appVersion: 1.2.0
-    created: "2024-09-30T14:16:56.560322+03:00"
+    created: "2024-09-30T14:21:16.70055+03:00"
     description: A helm chart for Kubernetes Zesty Disk. A dynamic block storage auto-scaler
       in order to right-size EBS volumes, improve application stability, and significantly
       reduce storage costs while relieving engineers of the burden of managing volumes.
-    digest: c0d56ac938db88bff79aa5beaef76a7e1cf31ddb8d90b2efee9f39b930672222
+    digest: 073ae53475d93940a53f53881163675b9573605dc784a3116bcf4676bf684446
     name: zesty
     type: application
     urls:
@@ -23,4 +23,4 @@ entries:
     urls:
     - https://github.com/zesty-co/zesty-helm/releases/download/1.1.2/zesty-1.1.2.tgz
     version: 1.1.2
-generated: "2024-09-30T14:16:56.559398+03:00"
+generated: "2024-09-30T14:21:16.699398+03:00"
