@@ -1,0 +1,113 @@
+image: alpine
+
+stages:
+  - test
+  - upload
+  - prod
+  - jenkins-tests
+
+test:
+  stage: test
+  script:
+    - echo "TODO add helm validate"
+
+variables:
+  GIT_NAME: "gitlab_bot"
+  GIT_EMAIL: "gitlab_bot@zesty.co"
+  REPO_PROVISIONER: zesty-disk/k8s/provisioner
+  REPO_SIDECAR: zesty-disk/k8s/manager
+  REPO_PROMETHEUS_EXPORTER: zesty-disk/k8s/prometheus-exporter
+  REPOS: ${REPO_PROVISIONER} ${REPO_SIDECAR} ${REPO_PROMETHEUS_EXPORTER}
+
+upload:
+  stage: upload
+  before_script:
+    - apk update && apk add --no-cache git curl
+    - wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
+    - curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+    - chmod 700 get_helm.sh
+    - VERIFY_CHECKSUM=false source ./get_helm.sh
+  script:
+    - git clone https://gitlab-ci-token:$CI_JOB_TOKEN@gitlab.com/${CI_PROJECT_PATH} --depth 1
+    - TAG=$(yq '.version' zesty-helm/Chart.yaml)
+    - CHART_NAME=$(yq '.name' zesty-helm/Chart.yaml)
+    - helm package zesty-helm
+    - curl --request POST --user gitlab-ci-token:$CI_JOB_TOKEN --form "chart=@${CHART_NAME}-${TAG}.tgz" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/helm/api/dev/charts"
+    - yq eval-all '. as $item ireduce ({}; . * $item)' values.yaml values-staging.yaml > values.yaml
+    - helm package zesty-helm
+    - curl --request POST --user gitlab-ci-token:$CI_JOB_TOKEN --form "chart=@${CHART_NAME}-${TAG}.tgz" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/helm/api/staging/charts"
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: always
+      changes:
+        - "values*.yaml"
+        - "templates/**/*"
+  tags:
+    - ${RUNNER_TAGS_NEW_STAGING}
+
+.install-utils: &install-utils
+  - apk update && apk add --no-cache git make musl-dev go
+  - git config --global user.name "${GIT_NAME}"
+  - git config --global user.email "${GIT_EMAIL}"
+  - wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
+  - git clone https://github.com/norwoodj/helm-docs.git
+  - cd /helm-docs/cmd/helm-docs
+  - go build
+
+.create-x-tag: &create-x-tag
+  - git clone ${CI_REPO} --depth 1
+  - cd ${CI_REPO##*/}
+  - current_version=$(yq .variables.VERSION VERSION.yml)
+  - git tag -a ${current_version}.x -m "production tag ${current_version}.x"
+  - git push origin ${current_version}.x --tags
+
+.increase-minor-version: &increase-minor-version
+  - current_version=$(yq .variables.VERSION VERSION.yml)
+  - new_version=$(echo "${current_version}" | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')
+  - ver=${new_version} yq -i '.variables.VERSION = strenv(ver)' VERSION.yml
+  - yq -i '.variables.PATCH=0' VERSION.yml
+  - /helm-docs/cmd/helm-docs/helm-docs -t README.md.gotmpl -c . -f "values*.yaml"
+  - git add VERSION.yml
+  - git commit -m "bump ${new_version}.0"
+  - git push --push-option=ci.skip
+
+release a production version:
+  stage: prod
+  before_script:
+    - apk update && apk add --no-cache git curl
+    - wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
+    - curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+    - chmod 700 get_helm.sh
+    - VERIFY_CHECKSUM=false source ./get_helm.sh
+  script:
+    - git clone https://gitlab-ci-token:$CI_JOB_TOKEN@gitlab.com/${CI_PROJECT_PATH} -b master --depth 1
+    - rm -f zesty-helm/values-staging.yaml zesty-helm/README.md
+    - rm -rf zesty-helm/scripts
+    - TAG=$(yq '.version' zesty-helm/Chart.yaml)
+    - CHART_NAME=$(yq '.name' zesty-helm/Chart.yaml)
+    - yq eval-all '. as $item ireduce ({}; . * $item)' zesty-helm/values.yaml zesty-helm/values-production.yaml > zesty-helm/values_tmp.yaml
+    - rm zesty-helm/values.yaml
+    - mv zesty-helm/values_tmp.yaml zesty-helm/values.yaml
+    - cat zesty-helm/values.yaml
+    - helm package zesty-helm --debug
+    - curl --request POST --user gitlab-ci-token:$CI_JOB_TOKEN --form "chart=@${CHART_NAME}-${TAG}.tgz" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/helm/api/master/charts"
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+      when: manual
+  tags:
+    - ${RUNNER_TAGS_NEW_STAGING}
+
+run-jenkins-tests:
+  stage: jenkins-tests
+  variables:
+    SUITE_REF: pvc
+    DEV_BRANCH: dev
+    HELM_BRANCH: $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
+    COMPONENT: "HELM"
+  trigger:
+    project: zestyco/automation/automation
+    branch: master
+    strategy: depend
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == $CI_DEFAULT_BRANCH'
+      when: always

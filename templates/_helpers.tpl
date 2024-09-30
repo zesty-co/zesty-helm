@@ -1,116 +1,70 @@
-{{- define "fullname" -}}
-{{- if .Values.prefixName }}
-{{- printf "%s-%s" .Values.prefixName .Chart.Name | trunc 63 | trimSuffix "-" }}
-{{- else }}
-{{- default .Chart.Name | trunc 63 | trimSuffix "-" }}
-{{- end }}
-{{- end }}
+{{/* OPERATOR */}}
 
-{{- define "zestyStorageOperator.image" -}}
-{{- printf "%s/%s" .Values.registry .Values.zestyStorageOperator.image.name }}
-{{- end }}
+{{- define "operator.name" -}}
+{{- printf "%s-operator" (include "name" .) | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{- define "operator.image" -}}
+{{- printf "%s/%s" .Values.registry .Values.storageOperator.image.name -}}
+{{- end -}}
+
+{{/* AGENT */}}
+
+{{- define "agent.name" -}}
+{{- printf "%s-agent" (include "name" .) | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
 
 {{- define "agent.image" -}}
-{{- printf "%s/%s" .Values.registry .Values.zestyStorageAgent.agent.image.name }}
-{{- end }}
+{{- printf "%s/%s" .Values.registry .Values.agentManager.agent.image.name -}}
+{{- end -}}
+
+{{/* SIDECAR */}}
 
 {{- define "manager.image" -}}
-{{- printf "%s/%s" .Values.registry .Values.zestyStorageAgent.manager.image.name }}
-{{- end }}
+{{- printf "%s/%s" .Values.registry .Values.agentManager.manager.image.name -}}
+{{- end -}}
 
-{{- define "prometheusExporter.image" -}}
-{{- printf "%s/%s" .Values.registry .Values.zestyStorageAgent.prometheusExporter.image.name }}
-{{- end }}
-
-{{- define "config.name" -}}
-{{- printf "%s" (include "fullname" .) | trunc 63 | trimSuffix "-" }}
-{{- end }}
-
-{{- define "zestyStorageOperator.name" -}}
-{{- printf "%s-storage-operator" (include "fullname" .) | trunc 63 | trimSuffix "-" }}
-{{- end }}
-
-{{- define "zestyStorageAgent.name" -}}
-{{- printf "zesty-storage-agent" | trunc 63 | trimSuffix "-" }}
-{{- end }}
-
-{{- define "chart-template.chart" -}}
-{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
-{{- end }}
-
-{{- define "chart-template.labels" -}}
-helm.sh/chart: {{ include "chart-template.chart" . }}
-{{ include "chart-template.selectorLabels" . }}
-app.kubernetes.io/created-by: {{ include "fullname" . }}
-app.kubernetes.io/part-of: {{ include "fullname" . }}
-app.kubernetes.io/component: {{ include "fullname" . }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- end }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{- end }}
-
-{{- define "chart-template.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "fullname" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
-{{- end }}
-
-{{- define "chart-template.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "fullname" .) .Values.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.serviceAccount.name }}
-{{- end }}
-{{- end }}
-
-{{/*************/}}
 {{/* SCHEDULER */}}
-{{/*************/}}
 
 {{- define "scheduler.name" -}}
-{{- default "zesty-scheduler" .Values.admission.schedulerName }}
-{{- end }}
+{{- printf "%s-scheduler" (include "name" .) | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
 
-{{/***********/}}
-{{/* MUTATOR */}}
-{{/***********/}}
+{{- define "scheduler.image" -}}
+{{- printf "public.ecr.aws/eks-distro/kubernetes/kube-scheduler" -}}
+{{- end -}}
+
+{{- define "scheduler.tag" -}}
+{{- $gitVersion := (semver .Capabilities.KubeVersion.GitVersion) -}}
+{{- printf "v%d.%d.%d-eks-%d-%d-latest" $gitVersion.Major $gitVersion.Minor $gitVersion.Patch $gitVersion.Major $gitVersion.Minor -}}
+{{- end -}}
+
+{{/* ADMISSION */}}
 
 {{- define "admission.mutator.name" -}}
-{{- printf "%s-mutator" (include "fullname" .) | trunc 63 | trimSuffix "-" }}
-{{- end }}
-
-{{- define "admission.secret.name" -}}
-{{- .Values.admission.secret.name | default (printf "%s-admission" (include "fullname" .) | trunc 63 | trimSuffix "-") }}
-{{- end }}
+{{- printf "%s-mutator" (include "name" .) | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
 
 {{- define "admission.mutator.image" -}}
-{{- printf "%s/%s" .Values.registry .Values.admission.mutator.image.name }}
-{{- end }}
+{{- printf "%s/%s" .Values.registry .Values.admission.mutator.image.name -}}
+{{- end -}}
 
-{{- define "admission.mutator.port" -}}
-{{- default 8443 .Values.admission.mutator.port }}
-{{- end }}
+{{- define "admission.secret.name" -}}
+{{- .Values.admission.secret.name | default (printf "%s-admission" (include "name" .) | trunc 63 | trimSuffix "-") -}}
+{{- end -}}
 
-{{/************/}}
 {{/* EXTENDER */}}
-{{/************/}}
 
 {{- define "extender.name" -}}
-{{- printf "%s-extender" (include "fullname" .) | trunc 63 | trimSuffix "-" }}
-{{- end }}
+{{- printf "%s-extender" (include "name" .) | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
 
 {{- define "extender.image" -}}
-{{- printf "%s/%s" .Values.registry .Values.extender.image.name }}
-{{- end }}
+{{- printf "%s/%s" .Values.registry .Values.extender.image.name -}}
+{{- end -}}
 
-{{- define "extender.port" -}}
-{{- default 8888 .Values.extender.port }}
-{{- end }}
+{{/* EXPORTER */}}
 
-{{- define "delve" -}}
-{{- if hasSuffix "debug" .Values.extender.image.tag }}
-ports:
-- name: delve
-  containerPort: 40000
-{{- end }}
-{{- end }}
+{{- define "prometheus.exporter.image" -}}
+{{- printf "%s/%s" .Values.registry .Values.agentManager.prometheusExporter.image.name -}}
+{{- end -}}

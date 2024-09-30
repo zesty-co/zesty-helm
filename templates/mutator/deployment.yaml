@@ -20,21 +20,22 @@ spec:
           image: {{ include "admission.mutator.image" . }}:init.{{ .Values.admission.mutator.image.tag }}
           imagePullPolicy: Always
           args:
-            - -commonName={{ include "admission.mutator.name" . }}
-            - -namespace={{ .Release.Namespace }}
-            - -secretName={{ include "admission.secret.name" . }}
-            - -mutatorPort={{ include "admission.mutator.port" . }}
+            - --namespace={{ .Release.Namespace }}
+            - --commonName={{ include "admission.mutator.name" . }}
+            - --secretName={{ include "admission.secret.name" . }}
+            - --mutatorName={{ include "admission.mutator.name" . }}
+            - --mutatorPort={{ .Values.admission.mutator.port }}
       containers:
         - name: mutator
           image: {{ include "admission.mutator.image" . }}:{{ .Values.admission.mutator.image.tag }}
           imagePullPolicy: Always
           args:
-            - -port={{ include "admission.mutator.port" . }}
-            - -certFile=/etc/secret/tls.crt
-            - -keyFile=/etc/secret/tls.key
-            - -schedulerName={{ include "scheduler.name" . }}
+            - --port={{ .Values.admission.mutator.port }}
+            - --certFile=/etc/secret/tls.crt
+            - --keyFile=/etc/secret/tls.key
+            - --schedulerName={{ include "scheduler.name" . }}
           ports:
-            - containerPort: {{ include "admission.mutator.port" . }}
+            - containerPort: {{ .Values.admission.mutator.port }}
           resources:
             requests:
               cpu: 200m
@@ -65,6 +66,6 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "chart-template.serviceAccountName" . }}
+      serviceAccountName: {{ .Values.serviceAccount.name }}
       securityContext:
         runAsNonRoot: true

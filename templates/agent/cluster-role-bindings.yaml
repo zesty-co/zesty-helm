@@ -1,12 +1,12 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ include "zestyStorageAgent.name" . }}
+  name: {{ include "agent.name" . }}
 subjects:
   - kind: ServiceAccount
     name: default
     namespace: {{ .Release.Namespace }}
 roleRef:
   kind: ClusterRole
-  name: {{ include "zestyStorageAgent.name" . }}
+  name: {{ include "agent.name" . }}
   apiGroup: rbac.authorization.k8s.io

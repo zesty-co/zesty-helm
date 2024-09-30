@@ -1,0 +1,34 @@
+# Zesty Helm Chart
+{{ template "chart.description" . }}
+
+{{ template "chart.versionBadge" . }}{{ template "chart.typeBadge" . }}{{ template "chart.appVersionBadge" . }}
+
+## Configuration
+
+## Usage
+
+## Monitoring
+The Zesty agent exposes a `/metrics` endpoint so that Prometheus (or other compatible metric collectors) could scrape and collect different exported values.
+In order to add the metrics to Prometheus, add a target by filtering the label `app=zesty-storage-agent`.
+___
+
+### Internal Installation
+1. Create a namespace for the provisioner
+2. Helm Chart Installation
+
+<ul>
+Use HELM_REPO_ADD_TOKEN from [zesty-helm Repo CI/CD Variables](https://gitlab.com/zestyco/zesty-disk/k8s/zesty-helm/-/settings/ci_cd)
+
+```shell
+helm repo add --username zesty.co --password <HELM_REPO_ADD_TOKEN> zestyrepo https://gitlab.com/api/v4/projects/37201242/packages/helm/stable
+helm install <some name> zestyrepo/zesty \
+  --set registry=<577926974532.dkr.ecr.us-west-2.amazonaws.com|473301030746.dkr.ecr.us-west-2.amazonaws.com> \
+  --namespace <provisioner namespace>
+```
+</ul>
+
+{{ template "chart.requirementsSection" . }}
+
+{{ template "chart.valuesSection" . }}
+
+{{ template "helm-docs.versionFooter" . }}
