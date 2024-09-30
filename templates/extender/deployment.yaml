@@ -24,10 +24,12 @@ spec:
       serviceAccountName: {{ include "extender.name" . }}
       containers:
         - name: kube-{{ include "scheduler.name" . }}
-          image: public.ecr.aws/eks-distro/kubernetes/kube-scheduler:v{{(semver .Capabilities.KubeVersion.GitVersion).Major}}.{{(semver .Capabilities.KubeVersion.GitVersion).Minor}}.0-eks-{{(semver .Capabilities.KubeVersion.GitVersion).Major}}-{{(semver .Capabilities.KubeVersion.GitVersion).Minor}}-latest
+          image: {{ include "scheduler.image" . }}:{{ include "scheduler.tag" . }}
           command:
             - /usr/local/bin/kube-scheduler
             - --config=/etc/kubernetes/scheduler-extender/scheduler-extender-config.yaml
+            - --leader-elect-resource-name={{ include "extender.name" . }}
+            - --leader-elect-resource-namespace=kube-system
             - --v={{ default 1 .Values.scheduler.logLevel }}
           livenessProbe:
             httpGet:
@@ -51,7 +53,7 @@ spec:
         - name: kube-{{ include "extender.name" . }}
           image: {{ include "extender.image" . }}:{{ .Values.extender.image.tag }}
           args:
-            - --port={{ include "extender.port" . }}
+            - --port={{ .Values.extender.port }}
           {{ include "delve" . | nindent 10 }}
           imagePullPolicy: Always
       topologySpreadConstraints:

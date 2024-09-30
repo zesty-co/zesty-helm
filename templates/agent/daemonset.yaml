@@ -1,0 +1,101 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "agent.name" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "agent.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "agent.name" . }}
+      {{- if .Values.agentManager.prometheusExporter.port }}
+      annotations:
+        prometheus.io/port: {{ .Values.agentManager.prometheusExporter.port | quote}}
+        prometheus.io/scrape: "true"
+      {{- end }}
+    spec:
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      priorityClassName: {{ .Values.agentManager.priorityClassName | default "system-node-critical" }}
+      hostPID: true
+      containers:
+        - name: agent
+          image: {{ include "agent.image" . }}:{{ .Values.agentManager.agent.image.tag }}
+          imagePullPolicy: Always
+          {{- with .Values.agentManager.agent.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - name: host-path-mnt
+              mountPath: /mnt
+            - name: host-path-dev
+              mountPath: /dev
+            - name: shared
+              mountPath: /host
+          securityContext:
+            privileged: true
+          env:
+            - name: ZESTY_BASE_URL
+              value: {{ .Values.agentManager.baseUrl | quote }}
+            {{- if ne .Values.agentManager.apiKey ""}}
+            - name: ZESTY_API_KEY
+              value: {{ .Values.agentManager.apiKey | quote }}
+            {{- end }}
+          {{- if eq .Values.agentManager.apiKey "" }}
+          envFrom:
+          - secretRef:
+                name: {{ .Values.agentManager.secret.name | quote }}
+          {{- end }}
+        - name: manager
+          image: {{ include "manager.image" . }}:{{ .Values.agentManager.manager.image.tag }}
+          imagePullPolicy: Always
+          env:
+            - name: ZD_RELEASE_NAMESPACE
+              value: {{ .Release.Namespace }}
+            - name: "ZD_CONFIGMAP_NAME"
+              value: {{ include "name" . }}
+          {{- with .Values.agentManager.manager.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+        {{- if .Values.agentManager.prometheusExporter.enabled }}
+        - name: prometheus-exporter
+          image: {{ include "prometheus.exporter.image" . }}:{{ .Values.agentManager.prometheusExporter.image.tag }}
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: shared
+              mountPath: /host
+          env:
+            - name: PROMETHEUS_EXPORTER_PORT
+              value: {{ .Values.agentManager.prometheusExporter.port | quote }}
+          ports:
+            - containerPort: {{ .Values.agentManager.prometheusExporter.port }}
+        {{- end }}
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: host-path-mnt
+          hostPath:
+            path: /mnt
+        - name: host-path-dev
+          hostPath:
+            path: /dev
+        - name: shared
+          emptyDir: {}

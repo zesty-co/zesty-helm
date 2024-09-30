@@ -3,12 +3,12 @@ kind: Service
 metadata:
   labels:
     control-plane: controller-manager
-    {{- include "chart-template.labels" . | nindent 4 }}
+    {{- include "labels" . | nindent 4 }}
   name: {{ include "admission.mutator.name" . }}
   namespace: {{ .Release.Namespace }}
 spec:
   ports:
   - port: 8443
-    targetPort: {{ include "admission.mutator.port" . }}
+    targetPort: {{ .Values.admission.mutator.port }}
   selector:
     app: {{ include "admission.mutator.name" . }}

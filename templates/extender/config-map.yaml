@@ -11,9 +11,8 @@ data:
       - schedulerName: {{ include "scheduler.name" . }}
     leaderElection:
       leaderElect: true
-      resourceName: {{ include "extender.name" . }}
     extenders:
-      - urlPrefix: "http://localhost:{{ include "extender.port" . }}"
+      - urlPrefix: "http://localhost:{{ .Values.extender.port }}"
         filterVerb: filter
         weight: 1
         enableHTTPS: false

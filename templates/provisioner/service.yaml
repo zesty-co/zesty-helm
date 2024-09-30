@@ -3,7 +3,7 @@ kind: Service
 metadata:
   labels:
     control-plane: controller-manager
-    {{- include "chart-template.labels" . | nindent 4 }}
+    {{- include "labels" . | nindent 4 }}
   name: zesty-metrics
   namespace: {{ .Release.Namespace }}
 spec:

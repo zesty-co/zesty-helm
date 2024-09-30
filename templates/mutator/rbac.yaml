@@ -18,11 +18,11 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   labels:
-    {{- include "chart-template.labels" . | nindent 4 }}
+    {{- include "labels" . | nindent 4 }}
   name: admission-mutator-clusterrolebinding
 subjects:
   - kind: ServiceAccount
-    name: {{ include "chart-template.serviceAccountName" . }}
+    name: {{ .Values.serviceAccount.name }}
     namespace: {{ .Release.Namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io

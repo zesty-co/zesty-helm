@@ -1,0 +1,16 @@
+{{- if and (.Capabilities.APIVersions.Has "monitoring.coreos.com/v1") .Values.agentManager.prometheusExporter.enabled -}}
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: {{ include "agent.name" . }}-pod-monitor
+  labels:
+    name: {{ include "agent.name" . }}-pod-monitor
+spec:
+  namespaceSelector:
+    any: true
+  selector:
+    matchLabels:
+      app: {{ include "agent.name" . }}
+  podMetricsEndpoints:
+  - targetPort: {{ .Values.agentManager.prometheusExporter.port }}
+{{- end -}}

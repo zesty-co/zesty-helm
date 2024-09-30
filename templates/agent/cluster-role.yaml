@@ -1,41 +1,47 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ include "extender.name" . }}
+  name: {{ include "agent.name" . }}
 rules:
   - apiGroups:
       - ""
+      - apps/v1
     resources:
       - nodes
-      - pods
+      - events
+      - statefulsets
+      - persistentvolumes
       - persistentvolumeclaims
     verbs:
       - get
-      - list
       - watch
+      - list
+      - patch
+      - create
+      - update
+      - delete
   - apiGroups:
-      - apps
+      - ""
     resources:
-      - statefulsets
+      - pods
     verbs:
-      - get
       - list
-      - watch
-  - apiGroups:
-      - storage.k8s.io
-    resources:
-      - csinodes
-    verbs:
       - get
-      - watch
-      - list
   - apiGroups:
       - storage.k8s.io
     resources:
       - volumeattachments
     verbs:
       - get
-      - watch
+      - list
+      - patch
+      - update
+  - apiGroups:
+      - storage.k8s.io
+    resources:
+      - storageclasses
+    verbs:
+      - get
       - list
   - apiGroups:
       - storage.zesty.co
@@ -43,13 +49,13 @@ rules:
       - filesystems
     verbs:
       - get
-      - watch
       - list
+      - patch
+      - update
   - apiGroups:
-      - coordination.k8s.io
+      - ""
     resources:
-      - leases
+      - configmaps
     verbs:
       - get
       - list
-      - update

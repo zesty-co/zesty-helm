@@ -1,15 +1,30 @@
-# Prod values of the chart, it will be merged with env specific values into values.yaml
+# Zesty Disk configuration.
 
-zestyStorageOperator:
+# Provides a prefix to the resource names.
+prefix: zesty-storage
+# The main service account.
+serviceAccount:
+  # Create a service account for the application.
+  create: true
+  # The name of the service account.
+  name: zesty-disk
+# The registry for the container images.
+registry: "672188301118.dkr.ecr.eu-west-1.amazonaws.com"
+# The storage operator configuration.
+storageOperator:
   image:
     name: zd/k8s/storage-operator
-    tag: 1.2.0
-zestyStorageAgent:
+    tag: 1.2.10
+# The agent manager configuration.
+agentManager:
   secret:
     name: zesty-disk-agent-cred
   baseUrl: https://sedz7kc6sc.execute-api.eu-west-1.amazonaws.com/k8s
-  apiKey: "" # if you put the value here, the secret won't be used.
+  # the api key for the communication with the backend.
+  # the secret won't be used, if associated with a value.
+  apiKey: ""
   priorityClassName: system-node-critical
+  # agent container configuration
   agent:
     image:
       name: zd/k8s/agent
@@ -20,50 +35,55 @@ zestyStorageAgent:
         memory: 128Mi
       limits:
         memory: 256Mi
+  # manager container configuration
   manager:
     image:
       name: zd/k8s/manager
-      tag: 1.3.32
+      tag: 1.3.35
     resources:
       requests:
         cpu: 100m
         memory: 128Mi
       limits:
         memory: 256Mi
+  # prometheus container configuration.
   prometheusExporter:
+    enabled: false
     image:
       name: zd/k8s/prometheus-exporter
       tag: 1.1.3
-    port: ""
+    port: 9100
+# The admission configuration.
 admission:
-  schedulerName: zesty-scheduler
   mutator:
     replicas: 2
     port: 8443
     image:
       name: zd/k8s/mutator
-      tag: 1.0.4
+      tag: 1.0.5
   secret:
     name: ""
+# The scheduler configuration.
 scheduler:
   replicas: 2
   logLevel: 1
+# The scheduler extender configuration.
 extender:
   image:
     name: zd/k8s/extender
-    tag: 1.2.0
+    tag: 1.2.10
   port: 8888
-rbac:
-  mutator:
-    clusterRole:
-      name: mutatingwebhookconfigurations-deleter
-serviceAccount:
-  create: true
-  name: "zesty-serviceaccount"
+# The node selector.
 nodeSelector: {}
+# The tolerations for all components
 tolerations: {}
+# The affinity for all components
 affinity: {}
+# The storage class name
 storageClassName: ""
-prefixName: ""
-registry: "672188301118.dkr.ecr.eu-west-1.amazonaws.com"
+# The secrets with credentials to pull images from the registry
 imagePullSecrets: []
+# The annotations for all components
+annotations: {}
+# The additional labels for all components
+additionalLabels: {}
