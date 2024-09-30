@@ -13,7 +13,7 @@ pack() {
 }
 
 index() {
-  helm repo index --merge index.yaml --url "https://github.com/zesty-co/zesty-helm/releases/download/${bumped_version}" .
+  helm repo index --url "https://github.com/zesty-co/zesty-helm/releases/download/${bumped_version}" .
 }
 
 release() {
