@@ -25,6 +25,7 @@ spec:
             - --secretName={{ include "admission.secret.name" . }}
             - --mutatorName={{ include "admission.mutator.name" . }}
             - --mutatorPort={{ .Values.admission.mutator.port }}
+            - --failurePolicy={{ default "Ignore" .Values.admission.mutator.failurePolicy }}
       containers:
         - name: mutator
           image: {{ include "admission.mutator.image" . }}:{{ .Values.admission.mutator.image.tag }}
