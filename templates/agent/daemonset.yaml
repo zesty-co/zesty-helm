@@ -38,7 +38,7 @@ spec:
       containers:
         - name: agent
           image: {{ include "agent.image" . }}:{{ .Values.agentManager.agent.image.tag }}
-          imagePullPolicy: Always
+          imagePullPolicy: {{ .Values.imagePullPolicy | default "Always" }}
           {{- with .Values.agentManager.agent.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
@@ -66,7 +66,7 @@ spec:
           {{- end }}
         - name: manager
           image: {{ include "manager.image" . }}:{{ .Values.agentManager.manager.image.tag }}
-          imagePullPolicy: Always
+          imagePullPolicy: {{ .Values.imagePullPolicy | default "Always" }}
           env:
             - name: ZD_RELEASE_NAMESPACE
               value: {{ .Release.Namespace }}
@@ -79,7 +79,7 @@ spec:
         {{- if .Values.agentManager.prometheusExporter.enabled }}
         - name: prometheus-exporter
           image: {{ include "prometheus.exporter.image" . }}:{{ .Values.agentManager.prometheusExporter.image.tag }}
-          imagePullPolicy: Always
+          imagePullPolicy: {{ .Values.imagePullPolicy | default "Always" }}
           volumeMounts:
             - name: shared
               mountPath: /host

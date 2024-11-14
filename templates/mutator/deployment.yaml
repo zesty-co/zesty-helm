@@ -18,7 +18,7 @@ spec:
       initContainers:
         - name: init
           image: {{ include "admission.mutator.image" . }}:init.{{ .Values.admission.mutator.image.tag }}
-          imagePullPolicy: Always
+          imagePullPolicy: {{ .Values.imagePullPolicy | default "Always" }}
           args:
             - --namespace={{ .Release.Namespace }}
             - --commonName={{ include "admission.mutator.name" . }}
@@ -29,7 +29,7 @@ spec:
       containers:
         - name: mutator
           image: {{ include "admission.mutator.image" . }}:{{ .Values.admission.mutator.image.tag }}
-          imagePullPolicy: Always
+          imagePullPolicy: {{ .Values.imagePullPolicy | default "Always" }}
           args:
             - --port={{ .Values.admission.mutator.port }}
             - --certFile=/etc/secret/tls.crt
