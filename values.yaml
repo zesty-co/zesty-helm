@@ -15,6 +15,13 @@ storageOperator:
   image:
     name: zd/k8s/storage-operator
     tag: 1.2.14
+  resources:
+    requests:
+      cpu: 500m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
 # The agent manager configuration.
 agentManager:
   secret:
@@ -90,3 +97,6 @@ imagePullSecrets: []
 annotations: {}
 # The additional labels for all components
 additionalLabels: {}
+# The image pull policy determines when to pull images from the registry.
+# Possible values are Always, IfNotPresent, and Never.
+imagePullPolicy: ""
