@@ -72,7 +72,6 @@ kubectl create secret generic zesty-disk-agent-cred --from-literal=ZESTY_API_KEY
 | `admission.mutator.port`                        | The port the Mutator is listening to                                                                                                                                                        | `8443`                  |
 | `admission.mutator.failurePolicy`               | Defines the behavior of the admission controller when a request fails. If set to `Ignore`, the request will be allowed even if the mutator fails.                                           | `Ignore`                |
 | `admission.secret`                              | Secret name to be used by the mutator. If this is blank, a new secret will be created                                                                                                       | ---                     |
-| `admission.failurePolicy`                       | Defines the behavior of the admission controller when a request fails. If set to `Ignore`, the request will be allowed even if the mutator fails.                                           | `Ignore`                |
 | `scheduler.replicas`                            | The amount of Scheduler & Extender pod replicas                                                                                                                                             | `2`                     |
 | `scheduler.logLevel`                            | The Scheduler & Extender pod log level                                                                                                                                                      | `1`                     |
 | `extender.port`                                 | The port the Extender is listening to                                                                                                                                                       | `8888`                  |
@@ -86,11 +85,6 @@ kubectl create secret generic zesty-disk-agent-cred --from-literal=ZESTY_API_KEY
 | `serviceAccount.create`                         | Creates a service account for the application                                                                                                                                               | `true`                  |
 | `serviceAccount.name`                           | The name of the service account                                                                                                                                                             | `zesty-disk`            |
 | `registry`                                      | The registry for the container images                                                                                                                                                       | ---                     |
-
-# The image pull policy determines when to pull images from the registry.
-# Possible values are Always, IfNotPresent, and Never.
-imagePullPolicy: ""
-
 
 ## Expose Zesty Disk filesystem metrics
 You can expose Zesty Disk filesystem metrics to Prometheus by setting `agentManager.prometheusExporter.enabled=true`
