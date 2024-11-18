@@ -160,6 +160,27 @@ spec:
                   type: array
               type: object
           type: object
+      additionalPrinterColumns:
+      - name: Namespace
+        type: string
+        jsonPath: .metadata.namespace
+      - name: Status
+        type: string
+        description: The status of the Filesystem
+        jsonPath: .status.status
+      - name: Storage Size
+        type: string
+        description: The size of the filesystem
+        jsonPath: .status.storageSize
+      - name: Mounting Pod
+        type: string
+        jsonPath: .status.mountingPod
+      - name: Node Name
+        type: string
+        jsonPath: .spec.node
+      - name: Age
+        type: date
+        jsonPath: .metadata.creationTimestamp
       served: true
       storage: true
       subresources:
