@@ -35,8 +35,12 @@
 {{- end -}}
 
 {{- define "scheduler.tag" -}}
+{{- if .Values.scheduler.tag -}}
+{{- .Values.scheduler.tag -}}
+{{- else -}}
 {{- $gitVersion := (semver .Capabilities.KubeVersion.GitVersion) -}}
 {{- printf "v%d.%d.%d-eks-%d-%d-latest" $gitVersion.Major $gitVersion.Minor $gitVersion.Patch $gitVersion.Major $gitVersion.Minor -}}
+{{- end -}}
 {{- end -}}
 
 {{/* ADMISSION */}}
