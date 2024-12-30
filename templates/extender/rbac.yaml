@@ -5,7 +5,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: {{ include "extender.name" . }}
-    namespace: kube-system
+    namespace: {{ .Release.Namespace }}
 roleRef:
   kind: ClusterRole
   name: system:kube-scheduler
@@ -18,7 +18,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: {{ include "extender.name" . }}
-    namespace: kube-system
+    namespace: {{ .Release.Namespace }}
 roleRef:
   kind: ClusterRole
   name: system:volume-scheduler
@@ -32,7 +32,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: {{ include "extender.name" . }}
-    namespace: kube-system
+    namespace: {{ .Release.Namespace }}
 roleRef:
   kind: Role
   name: extension-apiserver-authentication-reader
@@ -45,7 +45,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: {{ include "extender.name" . }}
-    namespace: kube-system
+    namespace: {{ .Release.Namespace }}
 roleRef:
   kind: ClusterRole
   name: {{ include "extender.name" . }}
