@@ -9,7 +9,7 @@ serviceAccount:
   # The name of the service account.
   name: zesty-disk
 # The registry for the container images.
-registry: "473301030746.dkr.ecr.us-west-2.amazonaws.com"
+registry: "672188301118.dkr.ecr.eu-west-1.amazonaws.com"
 # The storage operator configuration.
 storageOperator:
   image:
