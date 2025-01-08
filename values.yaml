@@ -26,7 +26,7 @@ storageOperator:
 agentManager:
   secret:
     name: zesty-disk-agent-cred
-  baseUrl: https://sedz7kc6sc.execute-api.eu-west-1.amazonaws.com/k8s
+  baseUrl: https://api.cloudvisor.io/zesty-disk-v6-new
   # the api key for the communication with the backend.
   # the secret won't be used, if associated with a value.
   apiKey: ""
