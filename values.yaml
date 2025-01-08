@@ -14,7 +14,7 @@ registry: "672188301118.dkr.ecr.eu-west-1.amazonaws.com"
 storageOperator:
   image:
     name: zd/k8s/storage-operator
-    tag: 1.2.14
+    tag: 1.2.23
   resources:
     requests:
       cpu: 500m
@@ -26,7 +26,7 @@ storageOperator:
 agentManager:
   secret:
     name: zesty-disk-agent-cred
-  baseUrl: https://sedz7kc6sc.execute-api.eu-west-1.amazonaws.com/k8s
+  baseUrl: https://api.cloudvisor.io/zesty-disk-v6-new
   # the api key for the communication with the backend.
   # the secret won't be used, if associated with a value.
   apiKey: ""
@@ -35,7 +35,7 @@ agentManager:
   agent:
     image:
       name: zd/k8s/agent
-      tag: 1.0.56
+      tag: 1.0.59
     resources:
       requests:
         cpu: 100m
@@ -46,7 +46,7 @@ agentManager:
   manager:
     image:
       name: zd/k8s/manager
-      tag: 1.3.37
+      tag: 1.3.38
     resources:
       requests:
         cpu: 100m
@@ -67,7 +67,7 @@ admission:
     port: 8443
     image:
       name: zd/k8s/mutator
-      tag: 1.0.6
+      tag: 1.0.8
     # specifies a failure policy (Ignore or Fail) that defines how
     # unrecognized errors from the admission endpoint are handled.
     failurePolicy: Ignore
@@ -81,7 +81,7 @@ scheduler:
 extender:
   image:
     name: zd/k8s/extender
-    tag: 1.2.14
+    tag: 1.2.23
   port: 8888
 # The node selector.
 nodeSelector: {}
