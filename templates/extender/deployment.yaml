@@ -5,7 +5,7 @@ metadata:
     component: scheduler
     tier: control-plane
   name: {{ include "extender.name" . }}
-  namespace: kube-system
+  namespace: {{ .Release.Namespace }}
 spec:
   selector:
     matchLabels:
@@ -29,7 +29,7 @@ spec:
             - /usr/local/bin/kube-scheduler
             - --config=/etc/kubernetes/scheduler-extender/scheduler-extender-config.yaml
             - --leader-elect-resource-name={{ include "extender.name" . }}
-            - --leader-elect-resource-namespace=kube-system
+            - --leader-elect-resource-namespace={{ .Release.Namespace }}
             - --v={{ default 1 .Values.scheduler.logLevel }}
           livenessProbe:
             httpGet:
