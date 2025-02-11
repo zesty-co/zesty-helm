@@ -132,6 +132,7 @@ spec:
                     - MigrationScheduled
                     - WaitingForNodeMigration
                     - WaitingForFsRelease
+                    - Available
                   type: string
                 storageSize:
                   anyOf:
