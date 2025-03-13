@@ -11,11 +11,9 @@ spec:
     metadata:
       labels:
         app: {{ include "agent.name" . }}
-      {{- if .Values.agentManager.prometheusExporter.port }}
       annotations:
         prometheus.io/port: {{ .Values.agentManager.prometheusExporter.port | quote}}
         prometheus.io/scrape: "true"
-      {{- end }}
     spec:
       {{- with .Values.tolerations }}
       tolerations:
@@ -76,7 +74,6 @@ spec:
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-        {{- if .Values.agentManager.prometheusExporter.enabled }}
         - name: prometheus-exporter
           image: {{ include "prometheus.exporter.image" . }}:{{ .Values.agentManager.prometheusExporter.image.tag }}
           imagePullPolicy: {{ .Values.imagePullPolicy | default "Always" }}
@@ -88,7 +85,6 @@ spec:
               value: {{ .Values.agentManager.prometheusExporter.port | quote }}
           ports:
             - containerPort: {{ .Values.agentManager.prometheusExporter.port }}
-        {{- end }}
       terminationGracePeriodSeconds: 30
       volumes:
         - name: host-path-mnt

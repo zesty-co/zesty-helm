@@ -55,7 +55,6 @@ agentManager:
         memory: 256Mi
   # prometheus container configuration.
   prometheusExporter:
-    enabled: false
     image:
       name: zd/k8s/prometheus-exporter
       tag: 1.1.3
