@@ -3,16 +3,8 @@
   "properties": {
     "agentManager": {
       "description": "Container Agent Image",
-      "properties": {
-        "baseUrl": {
-          "description": "Zesty Backend Base API URL",
-          "type": "string",
-          "minLength": 5
-        }
-      },
       "type": "object",
       "required": [
-        "baseUrl",
         "apiKey"
       ]
     }
