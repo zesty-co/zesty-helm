@@ -17,6 +17,7 @@ spec:
         kubectl.kubernetes.io/default-container: storage-operator
       labels:
         control-plane: controller-manager
+        helm.sh/chart: {{ include "chart" . }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:

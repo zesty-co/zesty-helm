@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   labels:
     component: scheduler
+    helm.sh/chart: {{ include "chart" . }}
     tier: control-plane
   name: {{ include "extender.name" . }}
   namespace: {{ .Release.Namespace }}
@@ -18,6 +19,7 @@ spec:
       labels:
         app: {{ include "extender.name" . }}
         component: scheduler
+        helm.sh/chart: {{ include "chart" . }}
         tier: control-plane
         version: second
     spec:

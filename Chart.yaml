@@ -7,6 +7,6 @@ description: A helm chart for Kubernetes Zesty Disk. A dynamic block storage aut
 # The type of this chart.
 type: application
 # The version of this chart (follows Semantic versioning).
-version: 1.7.0
+version: 1.7.1
 # The application version.
-appVersion: 1.7.0
+appVersion: 1.7.1
