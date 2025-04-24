@@ -1,6 +1,8 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
+  labels:
+    helm.sh/chart: {{ include "chart" . }}
   name: {{ include "agent.name" . }}
   namespace: {{ .Release.Namespace }}
 spec:
@@ -11,6 +13,8 @@ spec:
     metadata:
       labels:
         app: {{ include "agent.name" . }}
+        component: kompassStorageAgent
+        helm.sh/chart: {{ include "chart" . }}
       annotations:
         prometheus.io/port: {{ .Values.agentManager.prometheusExporter.port | quote}}
         prometheus.io/scrape: "true"

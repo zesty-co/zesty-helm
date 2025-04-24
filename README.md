@@ -6,15 +6,18 @@ Use the Helm package to install [Zesty Disk](https://zesty.co/products/zesty-dis
 
 ## Table of Contents
 
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Add the Zesty repository to your Helm client](#add-the-zesty-repository-to-your-helm-client)
-- [Update a configured repository](#update-a-configured-repository)
-- [Install the chart](#install-the-chart)
-  - [To use the API Key as a secret:](#to-use-the-api-key-as-a-secret)
-- [Helm installation args](#helm-installation-args)
-- [Monitoring](#monitoring)
-- [Uninstalling the Chart](#uninstalling-the-chart)
+- [Zesty Disk for Kubernetes Helm Chart](#zesty-disk-for-kubernetes-helm-chart)
+  - [Table of Contents](#table-of-contents)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+    - [Add the Zesty repository to your Helm client](#add-the-zesty-repository-to-your-helm-client)
+    - [Update a configured repository](#update-a-configured-repository)
+    - [Install the chart](#install-the-chart)
+      - [To use the API Key as a secret](#to-use-the-api-key-as-a-secret)
+  - [Helm installation args](#helm-installation-args)
+  - [Expose Zesty Disk filesystem metrics](#expose-zesty-disk-filesystem-metrics)
+  - [Monitoring](#monitoring)
+  - [Uninstalling the Chart](#uninstalling-the-chart)
 
 ## Prerequisites
 
@@ -39,7 +42,7 @@ helm repo update
 You can enter your Zesty API key in the command line, or you can define it using a secret.
 
 ```bash
-helm install zesty-pvc [-n <ZESTY_HELM_NAMESPACE>] --set agentManager.apiKey=<API_KEY> zestyrepo/zesty
+helm install zesty-pvc [-n <ZESTY_HELM_NAMESPACE>] --set agentManager.apiKey=<API_KEY> zestyrepo/kompass-storage
 ```
 
 #### To use the API Key as a secret
@@ -97,7 +100,7 @@ kubectl create secret generic zesty-disk-agent-cred --from-literal=ZESTY_API_KEY
 You can expose Zesty Disk filesystem metrics to Prometheus by setting `agentManager.prometheusExporter.enabled=true`
 
 ```bash
-helm install zesty-pvc [-n <ZESTY_HELM_NAMESPACE>] --set agentManager.apiKey=<API_KEY> --set agentManager.prometheusExporter.enabled=true zestyrepo/zesty
+helm install zesty-pvc [-n <ZESTY_HELM_NAMESPACE>] --set agentManager.apiKey=<API_KEY> --set agentManager.prometheusExporter.enabled=true zestyrepo/kompass-storage
 ```
 
 ## Monitoring

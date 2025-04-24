@@ -5,6 +5,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app: {{ include "admission.mutator.name" . }}
+    helm.sh/chart: {{ include "chart" . }}
 spec:
   replicas: {{ .Values.admission.mutator.replicas | default 1 }}
   selector:
@@ -14,6 +15,7 @@ spec:
     metadata:
       labels:
         app: {{ include "admission.mutator.name" . }}
+        helm.sh/chart: {{ include "chart" . }}
     spec:
       initContainers:
         - name: init

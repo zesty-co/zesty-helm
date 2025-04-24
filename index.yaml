@@ -1,5 +1,18 @@
 apiVersion: v1
 entries:
+  kompass-storage:
+  - apiVersion: v2
+    appVersion: 1.7.1
+    created: "2025-04-24T11:07:19.233016+03:00"
+    description: A helm chart for Kubernetes Zesty Disk. A dynamic block storage auto-scaler
+      in order to right-size EBS volumes, improve application stability, and significantly
+      reduce storage costs while relieving engineers of the burden of managing volumes.
+    digest: 42b1dc6619cac6fc85b6b618b492b6d5f6619590b44e22d50f58c7e6a5b3fe03
+    name: kompass-storage
+    type: application
+    urls:
+    - https://github.com/zesty-co/zesty-helm/releases/download/1.7.1/kompass-storage-1.7.1.tgz
+    version: 1.7.1
   zesty:
   - apiVersion: v2
     appVersion: 1.7.0
@@ -95,4 +108,4 @@ entries:
     urls:
     - https://github.com/zesty-co/zesty-helm/releases/download/1.1.2/zesty-1.1.2.tgz
     version: 1.1.2
-generated: "2025-04-01T16:36:54.197238+03:00"
+generated: "2025-04-24T11:07:19.231141+03:00"
