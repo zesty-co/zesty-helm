@@ -14,7 +14,7 @@ registry: "672188301118.dkr.ecr.eu-west-1.amazonaws.com"
 storageOperator:
   image:
     name: zd/k8s/storage-operator
-    tag: 1.2.29
+    tag: 1.2.30
   resources:
     requests:
       cpu: 500m
@@ -34,7 +34,7 @@ agentManager:
   agent:
     image:
       name: zd/k8s/agent
-      tag: 1.0.61
+      tag: 1.0.63
     resources:
       requests:
         cpu: 100m
@@ -45,7 +45,7 @@ agentManager:
   manager:
     image:
       name: zd/k8s/manager
-      tag: 1.3.39
+      tag: 1.3.40
     resources:
       requests:
         cpu: 100m
@@ -79,7 +79,7 @@ scheduler:
 extender:
   image:
     name: zd/k8s/extender
-    tag: 1.2.29
+    tag: 1.2.30
   port: 8888
 # The node selector.
 nodeSelector: {}

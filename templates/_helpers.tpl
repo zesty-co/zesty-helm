@@ -39,7 +39,11 @@
 {{- .Values.scheduler.tag -}}
 {{- else -}}
 {{- $gitVersion := (semver .Capabilities.KubeVersion.GitVersion) -}}
-{{- printf "v%d.%d.%d-eks-%d-%d-latest" $gitVersion.Major $gitVersion.Minor $gitVersion.Patch $gitVersion.Major $gitVersion.Minor -}}
+{{- $patch := $gitVersion.Patch -}}
+{{- if gt $gitVersion.Patch 1 -}}
+{{- $patch = (sub $gitVersion.Patch 1) -}}
+{{- end -}}
+{{- printf "v%d.%d.%d-eks-%d-%d-latest" $gitVersion.Major $gitVersion.Minor $patch $gitVersion.Major $gitVersion.Minor -}}
 {{- end -}}
 {{- end -}}
 
