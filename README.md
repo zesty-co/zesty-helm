@@ -14,6 +14,7 @@ Use the Helm package to install [Zesty Disk](https://zesty.co/products/zesty-dis
     - [Update a configured repository](#update-a-configured-repository)
     - [Install the chart](#install-the-chart)
       - [To use the API Key as a secret](#to-use-the-api-key-as-a-secret)
+      - [EKS Auto Mode](#eks-auto-mode)
   - [Helm installation args](#helm-installation-args)
   - [Expose Zesty Disk filesystem metrics](#expose-zesty-disk-filesystem-metrics)
   - [Monitoring](#monitoring)
@@ -53,6 +54,15 @@ kubectl create secret generic zesty-disk-agent-cred --from-literal=ZESTY_API_KEY
 
 > Using the secret method, there's no need to pass `--set agentManager.apiKey=<api-key>`
 
+#### EKS Auto Mode
+
+> [!IMPORTANT]
+> It is mandatory to set `accountId` if using EKS Auto Mode or if cloud metadata API is unreachable
+
+```bash
+helm install zesty-pvc [-n <ZESTY_HELM_NAMESPACE>] --set agentManager.apiKey=<API_KEY> --set accountId=<CLOUD_ACCOUNT_ID> zestyrepo/kompass-storage
+```
+
 ## Helm installation args
 >
 > All arguments are set either using the Helm `set` command `--set agentManager.apiKey=<API_KEY>` or through a `values.yaml` file.
@@ -60,6 +70,7 @@ kubectl create secret generic zesty-disk-agent-cred --from-literal=ZESTY_API_KEY
 | Option                                          | Description                                                                                                                                                                                 | Default                 |
 |-------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------|
 | `prefix`                                        | Provides a prefix to the resource namespace                                                                                                                                                 | `zesty-storage`         |
+| `accountId`                                     | Cloud account ID. Required if the cloud metadata API is unreachable, for example if using EKS Auto Mode                                                                                                | `""` |
 | `agentManager.secret.name`                      | The name of the secret contains the API key                                                                                                                                                 | `zesty-disk-agent-cred` |
 | `agentManager.apiKey`                           | Zesty API key (the secret won't be used, if associated with a value)                                                                                                                        | ---                     |
 | `agentManager.baseUrl`                          | The URL of the Zesty backend                                                                                                                                                                | ---                     |
@@ -116,5 +127,5 @@ To uninstall/delete:
 helm delete zesty-pvc [-n <ZESTY_HELM_NAMESPACE>]
 ```
 
-[Zesty documentation site](https://docs.zesty.co/docs/zesty-disk-for-kubernetes)
+[Zesty documentation site](https://docs.zesty.co/docs/storage-optimization)
 

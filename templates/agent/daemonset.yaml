@@ -61,6 +61,8 @@ spec:
             - name: ZESTY_API_KEY
               value: {{ .Values.agentManager.apiKey | quote }}
             {{- end }}
+            - name: ZESTY_ACCOUNT_ID
+              value: {{ .Values.accountId | quote }}
           {{- if eq .Values.agentManager.apiKey "" }}
           envFrom:
           - secretRef:
@@ -74,6 +76,8 @@ spec:
               value: {{ .Release.Namespace }}
             - name: "ZD_CONFIGMAP_NAME"
               value: {{ include "name" . }}
+            - name: ZESTY_ACCOUNT_ID
+              value: {{ .Values.accountId | quote }}
           {{- with .Values.agentManager.manager.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
