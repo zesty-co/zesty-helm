@@ -1,7 +1,7 @@
 {{/* OPERATOR */}}
 
 {{- define "operator.name" -}}
-{{- printf "%s-operator" (include "name" .) | trunc 63 | trimSuffix "-" -}}
+{{- .Values.storageOperator.fullnameOverride | default (printf "%s-operator" (include "name" .) | trunc 63 | trimSuffix "-") -}}
 {{- end -}}
 
 {{- define "operator.image" -}}
@@ -11,7 +11,7 @@
 {{/* AGENT */}}
 
 {{- define "agent.name" -}}
-{{- printf "%s-agent" (include "name" .) | trunc 63 | trimSuffix "-" -}}
+{{- .Values.agentManager.fullnameOverride | default (printf "%s-agent" (include "name" .) | trunc 63 | trimSuffix "-") -}}
 {{- end -}}
 
 {{- define "agent.image" -}}
@@ -50,7 +50,7 @@
 {{/* ADMISSION */}}
 
 {{- define "admission.mutator.name" -}}
-{{- printf "%s-mutator" (include "name" .) | trunc 63 | trimSuffix "-" -}}
+{{- .Values.admission.mutator.fullnameOverride | default (printf "%s-mutator" (include "name" .) | trunc 63 | trimSuffix "-") -}}
 {{- end -}}
 
 {{- define "admission.mutator.image" -}}
@@ -64,7 +64,7 @@
 {{/* EXTENDER */}}
 
 {{- define "extender.name" -}}
-{{- printf "%s-extender" (include "name" .) | trunc 63 | trimSuffix "-" -}}
+{{- .Values.extender.fullnameOverride | default (printf "%s-extender" (include "name" .) | trunc 63 | trimSuffix "-") -}}
 {{- end -}}
 
 {{- define "extender.image" -}}

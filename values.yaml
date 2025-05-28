@@ -12,6 +12,7 @@ serviceAccount:
 registry: "672188301118.dkr.ecr.eu-west-1.amazonaws.com"
 # The storage operator configuration.
 storageOperator:
+  # fullnameOverride: ""
   image:
     name: zd/k8s/storage-operator
     tag: 1.2.30
@@ -24,6 +25,7 @@ storageOperator:
       memory: 256Mi
 # The agent manager configuration.
 agentManager:
+  # fullnameOverride: ""
   secret:
     name: zesty-disk-agent-cred
   # the api key for the communication with the backend.
@@ -61,6 +63,7 @@ agentManager:
 # The admission configuration.
 admission:
   mutator:
+    # fullnameOverride: ""
     replicas: 2
     port: 8443
     image:
@@ -77,6 +80,7 @@ scheduler:
   logLevel: 1
 # The scheduler extender configuration.
 extender:
+  # fullnameOverride: ""
   image:
     name: zd/k8s/extender
     tag: 1.2.30
