@@ -2,7 +2,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    {{- include "labels" . | nindent 4 }}
+    {{- include "zestyPvcLabels" . | nindent 4 }}
   name: {{ include "operator.name" . }}
   namespace: {{ .Release.Namespace }}
 rules:
@@ -121,7 +121,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   labels:
-    {{- include "labels" . | nindent 4 }}
+    {{- include "zestyPvcLabels" . | nindent 4 }}
   name: {{ include "operator.name" . }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -136,7 +136,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   labels:
-    {{- include "labels" . | nindent 4 }}
+    {{- include "zestyPvcLabels" . | nindent 4 }}
   name: {{ include "operator.name" . }}-leader-election
   namespace: {{ .Release.Namespace }}
 rules:
@@ -176,7 +176,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   labels:
-    {{- include "labels" . | nindent 4 }}
+    {{- include "zestyPvcLabels" . | nindent 4 }}
   name: {{ include "operator.name" . }}-leader-election
   namespace: {{ .Release.Namespace }}
 roleRef:
@@ -192,7 +192,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    {{- include "labels" . | nindent 4 }}
+    {{- include "zestyPvcLabels" . | nindent 4 }}
   name: {{ include "operator.name" . }}-proxy-role
 rules:
   - apiGroups:
@@ -212,7 +212,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   labels:
-    {{- include "labels" . | nindent 4 }}
+    {{- include "zestyPvcLabels" . | nindent 4 }}
   name: {{ include "operator.name" . }}-proxy
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -227,7 +227,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    {{- include "labels" . | nindent 4 }}
+    {{- include "zestyPvcLabels" . | nindent 4 }}
   name: {{ include "operator.name" . }}-metrics-reader
 rules:
   - nonResourceURLs:

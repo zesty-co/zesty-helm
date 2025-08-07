@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   labels:
     component: scheduler
+    {{- include "zestyPvcLabels" . | nindent 4 }}
     helm.sh/chart: {{ include "chart" . }}
     tier: control-plane
   name: {{ include "extender.name" . }}
@@ -26,7 +27,7 @@ spec:
       serviceAccountName: {{ include "extender.name" . }}
       containers:
         - name: kube-{{ include "scheduler.name" . }}
-          image: {{ include "scheduler.image" . }}:{{ include "scheduler.tag" . }}
+          image: {{ .Values.scheduler.image.name }}:{{ include "scheduler.tag" . }}
           command:
             - /usr/local/bin/kube-scheduler
             - --config=/etc/kubernetes/scheduler-extender/scheduler-extender-config.yaml
