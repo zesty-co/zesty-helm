@@ -4,6 +4,7 @@ metadata:
   name: {{ include "admission.mutator.name" . }}
   namespace: {{ .Release.Namespace }}
   labels:
+    {{- include "zestyPvcLabels" . | nindent 4 }}
     app: {{ include "admission.mutator.name" . }}
     helm.sh/chart: {{ include "chart" . }}
 spec:

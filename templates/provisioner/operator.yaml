@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   labels:
     control-plane: zesty-disk-controller
-    {{- include "labels" . | nindent 4 }}
+    {{- include "zestyPvcLabels" . | nindent 4 }}
   name: {{ include "operator.name" . }}
   namespace: {{ .Release.Namespace }}
 spec:
@@ -39,7 +39,7 @@ spec:
                       - linux
       containers:
         - name: kube-rbac-proxy
-          image: gcr.io/kubebuilder/kube-rbac-proxy:v0.13.1
+          image: {{ .Values.storageOperator.kubeRbacProxy.image.name }}:{{ .Values.storageOperator.kubeRbacProxy.image.tag }}
           args:
             - --secure-listen-address=0.0.0.0:8443
             - --upstream=http://127.0.0.1:8080/

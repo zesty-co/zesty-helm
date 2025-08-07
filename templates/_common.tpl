@@ -11,9 +11,9 @@ app.kubernetes.io/name: {{ include "name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
-{{- define "labels" -}}
+{{- define "zestyPvcLabels" -}}
 helm.sh/chart: {{ include "chart" . }}
-app.kubernetes.io/name: {{ include "name" . }}
+app.kubernetes.io/name: "kompass-storage"
 app.kubernetes.io/part-of: {{ include "name" . }}
 app.kubernetes.io/component: {{ include "name" . }}
 app.kubernetes.io/created-by: {{ include "name" . }}

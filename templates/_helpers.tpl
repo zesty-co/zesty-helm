@@ -1,7 +1,7 @@
 {{/* OPERATOR */}}
 
 {{- define "operator.name" -}}
-{{- printf "%s-operator" (include "name" .) | trunc 63 | trimSuffix "-" -}}
+{{- .Values.storageOperator.fullnameOverride | default (printf "%s-operator" (include "name" .) | trunc 63 | trimSuffix "-") -}}
 {{- end -}}
 
 {{- define "operator.image" -}}
@@ -11,7 +11,7 @@
 {{/* AGENT */}}
 
 {{- define "agent.name" -}}
-{{- printf "%s-agent" (include "name" .) | trunc 63 | trimSuffix "-" -}}
+{{- .Values.agentManager.fullnameOverride | default (printf "%s-agent" (include "name" .) | trunc 63 | trimSuffix "-") -}}
 {{- end -}}
 
 {{- define "agent.image" -}}
@@ -30,19 +30,12 @@
 {{- printf "%s-scheduler" (include "name" .) | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
-{{- define "scheduler.image" -}}
-{{- printf "public.ecr.aws/eks-distro/kubernetes/kube-scheduler" -}}
-{{- end -}}
-
 {{- define "scheduler.tag" -}}
-{{- if .Values.scheduler.tag -}}
-{{- .Values.scheduler.tag -}}
+{{- if .Values.scheduler.image.tag -}}
+{{- .Values.scheduler.image.tag -}}
 {{- else -}}
 {{- $gitVersion := (semver .Capabilities.KubeVersion.GitVersion) -}}
 {{- $patch := $gitVersion.Patch -}}
-{{- if gt $gitVersion.Patch 1 -}}
-{{- $patch = (sub $gitVersion.Patch 1) -}}
-{{- end -}}
 {{- printf "v%d.%d.%d-eks-%d-%d-latest" $gitVersion.Major $gitVersion.Minor $patch $gitVersion.Major $gitVersion.Minor -}}
 {{- end -}}
 {{- end -}}
@@ -50,7 +43,7 @@
 {{/* ADMISSION */}}
 
 {{- define "admission.mutator.name" -}}
-{{- printf "%s-mutator" (include "name" .) | trunc 63 | trimSuffix "-" -}}
+{{- .Values.admission.mutator.fullnameOverride | default (printf "%s-mutator" (include "name" .) | trunc 63 | trimSuffix "-") -}}
 {{- end -}}
 
 {{- define "admission.mutator.image" -}}
@@ -64,7 +57,7 @@
 {{/* EXTENDER */}}
 
 {{- define "extender.name" -}}
-{{- printf "%s-extender" (include "name" .) | trunc 63 | trimSuffix "-" -}}
+{{- .Values.extender.fullnameOverride | default (printf "%s-extender" (include "name" .) | trunc 63 | trimSuffix "-") -}}
 {{- end -}}
 
 {{- define "extender.image" -}}
