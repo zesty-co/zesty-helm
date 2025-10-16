@@ -16,7 +16,7 @@ spec:
   restartPolicy: Never
   containers:
   - name: assert-no-zesty-sc-references
-    image: "bitnami/kubectl:1.27.14-debian-12-r2"
+    image: "672188301118.dkr.ecr.eu-west-1.amazonaws.com/docker-hub/bitnami/kubectl:1.27.14-debian-12-r2"
     command: ["/bin/bash"]
     args:
       - "-c"
